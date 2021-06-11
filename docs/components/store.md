@@ -1,13 +1,12 @@
 ---
-title: Store
 type: docs
+title: Store
 menu: components
 ---
 
 # Store
 
-The `thanos store` command (also known as Store Gateway) implements the Store API on top of historical data in an object storage bucket. It acts primarily as an API gateway and therefore does not need significant amounts of local disk space. It joins a Thanos cluster on startup and advertises the data it can access.
-It keeps a small amount of information about all remote blocks on local disk and keeps it in sync with the bucket. This data is generally safe to delete across restarts at the cost of increased startup times.
+The `thanos store` command (also known as Store Gateway) implements the Store API on top of historical data in an object storage bucket. It acts primarily as an API gateway and therefore does not need significant amounts of local disk space. It joins a Thanos cluster on startup and advertises the data it can access. It keeps a small amount of information about all remote blocks on local disk and keeps it in sync with the bucket. This data is generally safe to delete across restarts at the cost of increased startup times.
 
 ```bash
 thanos store \
@@ -17,18 +16,18 @@ thanos store \
 
 The content of `bucket.yml`:
 
-```yaml
+```yaml mdox-exec="go run scripts/cfggen/main.go --name=gcs.Config"
 type: GCS
 config:
-  bucket: example-bucket
+  bucket: ""
+  service_account: ""
 ```
 
 In general, an average of 6 MB of local disk space is required per TSDB block stored in the object storage bucket, but for high cardinality blocks with large label set it can even go up to 30MB and more. It is for the pre-computed index, which includes symbols and postings offsets as well as metadata JSON.
 
 ## Flags
 
-[embedmd]:# (flags/store.txt $)
-```$
+```$ mdox-exec="thanos store --help"
 usage: thanos store [<flags>]
 
 Store node giving access to blocks in a bucket provider. Now supported GCS, S3,
@@ -254,7 +253,7 @@ Check more [here](https://thanos.io/tip/thanos/sharding.md/).
 
 Thanos Store Gateway supports an index cache to speed up postings and series lookups from TSDB blocks indexes. Two types of caches are supported:
 
-- `in-memory` (_default_)
+- `in-memory` (*default*)
 - `memcached`
 
 ### In-memory index cache
@@ -263,8 +262,7 @@ The `in-memory` index cache is enabled by default and its max size can be config
 
 Alternatively, the `in-memory` index cache can also be configured using `--index-cache.config-file` to reference the configuration file or `--index-cache.config` to put yaml config directly:
 
-[embedmd]:# (../flags/config_index_cache_in_memory.txt yaml)
-```yaml
+```yaml mdox-exec="go run scripts/cfggen/main.go --name=storecache.InMemoryIndexCacheConfig"
 type: IN-MEMORY
 config:
   max_size: 0
@@ -280,8 +278,7 @@ All the settings are **optional**:
 
 The `memcached` index cache allows to use [Memcached](https://memcached.org) as cache backend. This cache type is configured using `--index-cache.config-file` to reference the configuration file or `--index-cache.config` to put yaml config directly:
 
-[embedmd]:# (../flags/config_index_cache_memcached.txt yaml)
-```yaml
+```yaml mdox-exec="go run scripts/cfggen/main.go --name=cacheutil.MemcachedClientConfig"
 type: MEMCACHED
 config:
   addresses: []

@@ -1,20 +1,18 @@
 ---
-title: Tools
 type: docs
+title: Tools
 menu: components
 ---
 
 # Tools
 
-The `thanos tools` subcommand of Thanos is a set of additional CLI, short-living tools that
-are meant to be ran for development or debugging purposes.
+The `thanos tools` subcommand of Thanos is a set of additional CLI, short-living tools that are meant to be ran for development or debugging purposes.
 
 All commands added as tools should land in `tools.go` or file with `tools_` prefix.
 
 ## Flags
 
-[embedmd]:# (flags/tools.txt $)
-```$
+```$ mdox-exec="thanos tools --help"
 usage: thanos tools <command> [<args> ...]
 
 Tools utility commands
@@ -90,8 +88,7 @@ Subcommands:
 
 ## Bucket
 
-The `thanos tools bucket` subcommand of Thanos is a set of commands to inspect data in object storage buckets.
-It is normally run as a standalone command to aid with troubleshooting.
+The `thanos tools bucket` subcommand of Thanos is a set of commands to inspect data in object storage buckets. It is normally run as a standalone command to aid with troubleshooting.
 
 Example:
 
@@ -101,17 +98,16 @@ thanos tools bucket verify --objstore.config-file=bucket.yml
 
 The content of `bucket.yml`:
 
-```yaml
+```yaml mdox-exec="go run scripts/cfggen/main.go --name=gcs.Config"
 type: GCS
 config:
-  bucket: example-bucket
+  bucket: ""
+  service_account: ""
 ```
 
-Bucket can be extended to add more subcommands that will be helpful when working with object storage buckets
-by adding a new command within [`/cmd/thanos/tools_bucket.go`](/cmd/thanos/tools_bucket.go)  .
+Bucket can be extended to add more subcommands that will be helpful when working with object storage buckets by adding a new command within [`/cmd/thanos/tools_bucket.go`](../../cmd/thanos/tools_bucket.go)  .
 
-[embedmd]:# (flags/tools_bucket.txt $)
-```$
+```$ mdox-exec="thanos tools bucket --help"
 usage: thanos tools bucket [<flags>] <command> [<args> ...]
 
 Bucket utility commands
@@ -205,8 +201,7 @@ Example:
 thanos tools bucket web --objstore.config-file="..."
 ```
 
-[embedmd]:# (flags/tools_bucket_web.txt $)
-```$
+```$ mdox-exec="thanos tools bucket web --help"
 usage: thanos tools bucket web [<flags>]
 
 Web interface for remote storage bucket.
@@ -290,8 +285,7 @@ thanos tools bucket verify --objstore.config-file="..."
 
 When using the `--repair` option, make sure that the compactor job is disabled first.
 
-[embedmd]:# (flags/tools_bucket_verify.txt $)
-```$
+```$ mdox-exec="thanos tools bucket verify --help"
 usage: thanos tools bucket verify [<flags>]
 
 Verify all blocks in the bucket against specified issues. NOTE: Depending on
@@ -371,8 +365,7 @@ Example:
 thanos tools bucket ls -o json --objstore.config-file="..."
 ```
 
-[embedmd]:# (flags/tools_bucket_ls.txt $)
-```$
+```$ mdox-exec="thanos tools bucket ls --help"
 usage: thanos tools bucket ls [<flags>]
 
 List all blocks in the bucket.
@@ -417,8 +410,7 @@ Example:
 thanos tools bucket inspect -l environment=\"prod\" --objstore.config-file="..."
 ```
 
-[embedmd]:# (flags/tools_bucket_inspect.txt $)
-```$
+```$ mdox-exec="thanos tools bucket inspect --help"
 usage: thanos tools bucket inspect [<flags>]
 
 Inspect all blocks in the bucket in detailed, table-like way.
@@ -468,12 +460,12 @@ Flags:
 NOTE: Currently it works only with Thanos blocks (meta.json has to have Thanos metadata).
 
 Example:
+
 ```
 thanos tools bucket replicate --objstore.config-file="..." --objstore-to.config="..."
 ```
 
-[embedmd]:# (flags/tools_bucket_replicate.txt $)
-```$
+```$ mdox-exec="thanos tools bucket replicate --help"
 usage: thanos tools bucket replicate [<flags>]
 
 Replicate data from one object storage to another. NOTE: Currently it works only
@@ -557,8 +549,7 @@ Flags:
 
 ### Bucket downsample
 
-`tools bucket downsample` is used to downsample blocks in an object store bucket as a service.
-It implements the downsample API on top of historical data in an object storage bucket.
+`tools bucket downsample` is used to downsample blocks in an object store bucket as a service. It implements the downsample API on top of historical data in an object storage bucket.
 
 ```bash
 thanos tools bucket downsample \
@@ -568,14 +559,14 @@ thanos tools bucket downsample \
 
 The content of `bucket.yml`:
 
-```yaml
+```yaml mdox-exec="go run scripts/cfggen/main.go --name=gcs.Config"
 type: GCS
 config:
-  bucket: example-bucket
+  bucket: ""
+  service_account: ""
 ```
 
-[embedmd]:# (flags/tools_bucket_downsample.txt $)
-```$
+```$ mdox-exec="thanos tools bucket downsample --help"
 usage: thanos tools bucket downsample [<flags>]
 
 Continuously downsamples blocks in an object store bucket.
@@ -638,14 +629,14 @@ thanos tools bucket mark \
 
 The example content of `bucket.yml`:
 
-```yaml
+```yaml mdox-exec="go run scripts/cfggen/main.go --name=gcs.Config"
 type: GCS
 config:
-  bucket: example-bucket
+  bucket: ""
+  service_account: ""
 ```
 
-[embedmd]:# (flags/tools_bucket_mark.txt $)
-```$
+```$ mdox-exec="thanos tools bucket mark --help"
 usage: thanos tools bucket mark --id=ID --marker=MARKER --details=DETAILS
 
 Mark block for deletion or no-compact in a safe way. NOTE: If the compactor is
@@ -708,8 +699,7 @@ By default, rewrite also produces `change.log` in the tmp local dir. Look for lo
 ts=2020-11-09T00:40:13.703322181Z caller=level.go:63 level=info msg="changelog will be available" file=/tmp/thanos-rewrite/01EPN74E401ZD2SQXS4SRY6DZX/change.log`
 ```
 
-[embedmd]:# (flags/tools_bucket_rewrite.txt $)
-```$
+```$ mdox-exec="thanos tools bucket rewrite --help"
 usage: thanos tools bucket rewrite --id=ID [<flags>]
 
 Rewrite chosen blocks in the bucket, while deleting or modifying series Resulted
@@ -798,8 +788,7 @@ The `tools rules-check` subcommand contains tools for validation of Prometheus r
 
 This is allowing to check the rules with the same validation as is used by the Thanos Ruler node.
 
-NOTE: The check is equivalent to the `promtool check rules` with addition of Thanos Ruler extended rules file syntax,
-which includes `partial_response_strategy` field which `promtool` does not allow.
+NOTE: The check is equivalent to the `promtool check rules` with addition of Thanos Ruler extended rules file syntax, which includes `partial_response_strategy` field which `promtool` does not allow.
 
 If the check fails the command fails with exit code `1`, otherwise `0`.
 
@@ -809,8 +798,7 @@ Example:
 ./thanos tools rules-check --rules cmd/thanos/testdata/rules-files/*.yaml
 ```
 
-[embedmd]:# (flags/tools_rules-check.txt $)
-```$
+```$ mdox-exec="thanos tools rules-check --help"
 usage: thanos tools rules-check --rules=RULES
 
 Check if the rule files are valid or not.
