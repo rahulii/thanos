@@ -340,8 +340,8 @@ func (x *PartialResponseStrategy) MarshalJSON() ([]byte, error) {
 
 // PromMatchersToMatchers returns proto matchers from Prometheus matchers.
 // NOTE: It allocates memory.
-func PromMatchersToMatchers(ms ...*labels.Matcher) ([]LabelMatcher, error) {
-	res := make([]LabelMatcher, 0, len(ms))
+func PromMatchersToMatchers(ms ...*labels.Matcher) ([]*LabelMatcher, error) {
+	res := make([]*LabelMatcher, 0, len(ms))
 	for _, m := range ms {
 		var t LabelMatcher_Type
 
@@ -357,7 +357,7 @@ func PromMatchersToMatchers(ms ...*labels.Matcher) ([]LabelMatcher, error) {
 		default:
 			return nil, errors.Errorf("unrecognized matcher type %d", m.Type)
 		}
-		res = append(res, LabelMatcher{Type: t, Name: m.Name, Value: m.Value})
+		res = append(res, &LabelMatcher{Type: t, Name: m.Name, Value: m.Value})
 	}
 	return res, nil
 }
