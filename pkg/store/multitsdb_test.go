@@ -146,7 +146,7 @@ func benchMultiTSDBSeries(t testutil.TB, totalSamples, totalSeries int, flushToB
 			Req: &storepb.SeriesRequest{
 				MinTime: 0,
 				MaxTime: math.MaxInt64,
-				Matchers: []storepb.LabelMatcher{
+				Matchers: []*storepb.LabelMatcher{
 					{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				},
 				PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,

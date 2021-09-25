@@ -68,7 +68,7 @@ func NewLocalStoreFromJSONMmappableFile(
 		extLabels: extLabels,
 		c:         f,
 		info: &storepb.InfoResponse{
-			LabelSets: []labelpb.ZLabelSet{
+			LabelSets: []*labelpb.ZLabelSet{
 				{Labels: labelpb.ZLabelsFromPromLabels(extLabels)},
 			},
 			StoreType: component.ToProto(),

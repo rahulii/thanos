@@ -82,7 +82,7 @@ func (s *MultiTSDBStore) Info(ctx context.Context, req *storepb.InfoRequest) (*s
 
 	// We can rely on every underlying TSDB to only have one labelset, so this
 	// will always allocate the correct length immediately.
-	resp.LabelSets = make([]labelpb.ZLabelSet, 0, len(infos))
+	resp.LabelSets = make([]*labelpb.ZLabelSet, 0, len(infos))
 	for _, info := range infos {
 		resp.LabelSets = append(resp.LabelSets, info.LabelSets...)
 	}

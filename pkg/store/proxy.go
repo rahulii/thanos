@@ -142,15 +142,15 @@ func (s *ProxyStore) Info(_ context.Context, _ *storepb.InfoRequest) (*storepb.I
 	res.MaxTime = maxTime
 	res.MinTime = minTime
 
-	labelSets := make(map[uint64]labelpb.ZLabelSet, len(stores))
+	labelSets := make(map[uint64]*labelpb.ZLabelSet, len(stores))
 	for _, st := range stores {
 		for _, lset := range st.LabelSets() {
 			mergedLabelSet := labelpb.ExtendSortedLabels(lset, s.selectorLabels)
-			labelSets[mergedLabelSet.Hash()] = labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(mergedLabelSet)}
+			labelSets[mergedLabelSet.Hash()] = &labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(mergedLabelSet)}
 		}
 	}
 
-	res.LabelSets = make([]labelpb.ZLabelSet, 0, len(labelSets))
+	res.LabelSets = make([]*labelpb.ZLabelSet, 0, len(labelSets))
 	for _, v := range labelSets {
 		res.LabelSets = append(res.LabelSets, v)
 	}

@@ -288,7 +288,7 @@ type BucketStore struct {
 	partitioner          Partitioner
 
 	filterConfig             *FilterConfig
-	advLabelSets             []labelpb.ZLabelSet
+	advLabelSets             []*labelpb.ZLabelSet
 	enableCompatibilityLabel bool
 
 	// Every how many posting offset entry we pool in heap memory. Default in Prometheus is 32.
@@ -484,10 +484,10 @@ func (s *BucketStore) SyncBlocks(ctx context.Context) error {
 	// Sync advertise labels.
 	var storeLabels labels.Labels
 	s.mtx.Lock()
-	s.advLabelSets = make([]labelpb.ZLabelSet, 0, len(s.advLabelSets))
+	s.advLabelSets = make([]*labelpb.ZLabelSet, 0, len(s.advLabelSets))
 	for _, bs := range s.blockSets {
 		storeLabels = storeLabels[:0]
-		s.advLabelSets = append(s.advLabelSets, labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(append(storeLabels, bs.labels...))})
+		s.advLabelSets = append(s.advLabelSets, &labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(append(storeLabels, bs.labels...))})
 	}
 	sort.Slice(s.advLabelSets, func(i, j int) bool {
 		return strings.Compare(s.advLabelSets[i].String(), s.advLabelSets[j].String()) < 0
@@ -675,7 +675,7 @@ func (s *BucketStore) Info(context.Context, *storepb.InfoRequest) (*storepb.Info
 	if s.enableCompatibilityLabel && len(res.LabelSets) > 0 {
 		// This is for compatibility with Querier v0.7.0.
 		// See query.StoreCompatibilityTypeLabelName comment for details.
-		res.LabelSets = append(res.LabelSets, labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: CompatibilityTypeLabelName, Value: "store"}}})
+		res.LabelSets = append(res.LabelSets, &labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: CompatibilityTypeLabelName, Value: "store"}}})
 	}
 	return res, nil
 }

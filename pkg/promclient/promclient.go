@@ -706,7 +706,7 @@ func (c *Client) SeriesInGRPC(ctx context.Context, base *url.URL, matchers []*la
 
 // LabelNames returns all known label names constrained by the given matchers. It uses gRPC errors.
 // NOTE: This method is tested in pkg/store/prometheus_test.go against Prometheus.
-func (c *Client) LabelNamesInGRPC(ctx context.Context, base *url.URL, matchers []storepb.LabelMatcher, startTime, endTime int64) ([]string, error) {
+func (c *Client) LabelNamesInGRPC(ctx context.Context, base *url.URL, matchers []*storepb.LabelMatcher, startTime, endTime int64) ([]string, error) {
 	u := *base
 	u.Path = path.Join(u.Path, "/api/v1/labels")
 	q := u.Query()
@@ -726,7 +726,7 @@ func (c *Client) LabelNamesInGRPC(ctx context.Context, base *url.URL, matchers [
 
 // LabelValuesInGRPC returns all known label values for a given label name. It uses gRPC errors.
 // NOTE: This method is tested in pkg/store/prometheus_test.go against Prometheus.
-func (c *Client) LabelValuesInGRPC(ctx context.Context, base *url.URL, label string, matchers []storepb.LabelMatcher, startTime, endTime int64) ([]string, error) {
+func (c *Client) LabelValuesInGRPC(ctx context.Context, base *url.URL, label string, matchers []*storepb.LabelMatcher, startTime, endTime int64) ([]string, error) {
 	u := *base
 	u.Path = path.Join(u.Path, "/api/v1/label/", label, "/values")
 	q := u.Query()

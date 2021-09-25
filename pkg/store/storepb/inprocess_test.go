@@ -64,7 +64,7 @@ func TestServerAsClient(t *testing.T) {
 			t.Run("Info", func(t *testing.T) {
 				s := &testStoreServer{
 					info: &InfoResponse{
-						LabelSets: []labelpb.ZLabelSet{{Labels: []labelpb.ZLabel{{Name: "a", Value: "b"}}}},
+						LabelSets: []*labelpb.ZLabelSet{{Labels: []labelpb.ZLabel{{Name: "a", Value: "b"}}}},
 						MinTime:   -1,
 						MaxTime:   10,
 						StoreType: StoreType_DEBUG,
@@ -111,7 +111,7 @@ func TestServerAsClient(t *testing.T) {
 						r := &SeriesRequest{
 							MinTime:                 -214,
 							MaxTime:                 213,
-							Matchers:                []LabelMatcher{{Value: "wfsdfs", Name: "__name__", Type: LabelMatcher_EQ}},
+							Matchers:                []*LabelMatcher{{Value: "wfsdfs", Name: "__name__", Type: LabelMatcher_EQ}},
 							PartialResponseStrategy: PartialResponseStrategy_ABORT,
 						}
 						client, err := ServerAsClient(s, 0).Series(context.TODO(), r)
@@ -136,7 +136,7 @@ func TestServerAsClient(t *testing.T) {
 						r := &SeriesRequest{
 							MinTime:                 -214,
 							MaxTime:                 213,
-							Matchers:                []LabelMatcher{{Value: "wfsdfs", Name: "__name__", Type: LabelMatcher_EQ}},
+							Matchers:                []*LabelMatcher{{Value: "wfsdfs", Name: "__name__", Type: LabelMatcher_EQ}},
 							PartialResponseStrategy: PartialResponseStrategy_ABORT,
 						}
 						client, err := ServerAsClient(s, 0).Series(context.TODO(), r)
@@ -164,7 +164,7 @@ func TestServerAsClient(t *testing.T) {
 						r := &SeriesRequest{
 							MinTime:                 -214,
 							MaxTime:                 213,
-							Matchers:                []LabelMatcher{{Value: "wfsdfs", Name: "__name__", Type: LabelMatcher_EQ}},
+							Matchers:                []*LabelMatcher{{Value: "wfsdfs", Name: "__name__", Type: LabelMatcher_EQ}},
 							PartialResponseStrategy: PartialResponseStrategy_ABORT,
 						}
 						client, err := ServerAsClient(s, 0).Series(context.TODO(), r)
@@ -190,7 +190,7 @@ func TestServerAsClient(t *testing.T) {
 			t.Run("LabelNames", func(t *testing.T) {
 				s := &testStoreServer{
 					info: &InfoResponse{
-						LabelSets: []labelpb.ZLabelSet{{Labels: []labelpb.ZLabel{{Name: "a", Value: "b"}}}},
+						LabelSets: []*labelpb.ZLabelSet{{Labels: []labelpb.ZLabel{{Name: "a", Value: "b"}}}},
 						MinTime:   -1,
 						MaxTime:   10,
 						StoreType: StoreType_DEBUG,

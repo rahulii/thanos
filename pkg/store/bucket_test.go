@@ -1294,7 +1294,7 @@ func benchBucketSeries(t testutil.TB, skipChunk bool, samplesPerSeries, totalSer
 			Req: &storepb.SeriesRequest{
 				MinTime: 0,
 				MaxTime: int64(expectedSamples) - 1,
-				Matchers: []storepb.LabelMatcher{
+				Matchers: []*storepb.LabelMatcher{
 					{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				},
 				SkipChunks: skipChunk,
@@ -1489,7 +1489,7 @@ func TestBucketSeries_OneBlock_InMemIndexCacheSegfault(t *testing.T) {
 		testutil.Ok(t, store.Series(&storepb.SeriesRequest{
 			MinTime: 0,
 			MaxTime: int64(numSeries) - 1,
-			Matchers: []storepb.LabelMatcher{
+			Matchers: []*storepb.LabelMatcher{
 				{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				{Type: storepb.LabelMatcher_EQ, Name: "b", Value: "1"},
 				// This bug shows only when we use lot's of symbols for matching.
@@ -1504,7 +1504,7 @@ func TestBucketSeries_OneBlock_InMemIndexCacheSegfault(t *testing.T) {
 		testutil.Ok(t, store.Series(&storepb.SeriesRequest{
 			MinTime: 0,
 			MaxTime: int64(numSeries) - 1,
-			Matchers: []storepb.LabelMatcher{
+			Matchers: []*storepb.LabelMatcher{
 				{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				{Type: storepb.LabelMatcher_EQ, Name: "b", Value: "2"},
 				// This bug shows only when we use lot's of symbols for matching.
@@ -1521,7 +1521,7 @@ func TestBucketSeries_OneBlock_InMemIndexCacheSegfault(t *testing.T) {
 		testutil.Ok(t, store.Series(&storepb.SeriesRequest{
 			MinTime: 0,
 			MaxTime: int64(numSeries) - 1,
-			Matchers: []storepb.LabelMatcher{
+			Matchers: []*storepb.LabelMatcher{
 				{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				{Type: storepb.LabelMatcher_EQ, Name: "b", Value: "1"},
 				// This bug shows only when we use lot's of symbols for matching.
@@ -1543,7 +1543,7 @@ func TestSeries_RequestAndResponseHints(t *testing.T) {
 			Req: &storepb.SeriesRequest{
 				MinTime: 0,
 				MaxTime: 1,
-				Matchers: []storepb.LabelMatcher{
+				Matchers: []*storepb.LabelMatcher{
 					{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				},
 			},
@@ -1560,7 +1560,7 @@ func TestSeries_RequestAndResponseHints(t *testing.T) {
 			Req: &storepb.SeriesRequest{
 				MinTime: 0,
 				MaxTime: 3,
-				Matchers: []storepb.LabelMatcher{
+				Matchers: []*storepb.LabelMatcher{
 					{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				},
 			},
@@ -1578,7 +1578,7 @@ func TestSeries_RequestAndResponseHints(t *testing.T) {
 			Req: &storepb.SeriesRequest{
 				MinTime: 0,
 				MaxTime: 3,
-				Matchers: []storepb.LabelMatcher{
+				Matchers: []*storepb.LabelMatcher{
 					{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				},
 				Hints: mustMarshalAny(&hintspb.SeriesRequestHints{
@@ -1650,7 +1650,7 @@ func TestSeries_ErrorUnmarshallingRequestHints(t *testing.T) {
 	req := &storepb.SeriesRequest{
 		MinTime: 0,
 		MaxTime: 3,
-		Matchers: []storepb.LabelMatcher{
+		Matchers: []*storepb.LabelMatcher{
 			{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 		},
 		Hints: mustMarshalAny(&hintspb.SeriesResponseHints{}),
@@ -1768,7 +1768,7 @@ func TestSeries_BlockWithMultipleChunks(t *testing.T) {
 			req := &storepb.SeriesRequest{
 				MinTime: testData.reqMinTime,
 				MaxTime: testData.reqMaxTime,
-				Matchers: []storepb.LabelMatcher{
+				Matchers: []*storepb.LabelMatcher{
 					{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "test"},
 				},
 			}
@@ -2249,7 +2249,7 @@ func benchmarkBlockSeriesWithConcurrency(b *testing.B, concurrency int, blockMet
 				req := &storepb.SeriesRequest{
 					MinTime: blockMeta.MinTime,
 					MaxTime: blockMeta.MaxTime,
-					Matchers: []storepb.LabelMatcher{
+					Matchers: []*storepb.LabelMatcher{
 						{Type: storepb.LabelMatcher_RE, Name: "i", Value: labelMatcher},
 					},
 					SkipChunks: false,

@@ -5,7 +5,7 @@ syntax = "proto3";
 package thanos;
 
 import "store/storepb/types.proto";
-import "gogoproto/gogo.proto";
+//import "gogoproto/gogo.proto";
 import "store/storepb/prompb/types.proto";
 import "store/labelpb/types.proto";
 import "google/protobuf/any.proto";

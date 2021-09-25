@@ -110,7 +110,7 @@ func (p *PrometheusStore) Info(_ context.Context, _ *storepb.InfoRequest) (*stor
 	mint, maxt := p.timestamps()
 
 	res := &storepb.InfoResponse{
-		Labels:    make([]labelpb.ZLabel, 0, len(lset)),
+		Labels:    make([]*labelpb.Label, 0, len(lset)),
 		StoreType: p.component.ToProto(),
 		MinTime:   mint,
 		MaxTime:   maxt,
@@ -119,7 +119,7 @@ func (p *PrometheusStore) Info(_ context.Context, _ *storepb.InfoRequest) (*stor
 
 	// Until we deprecate the single labels in the reply, we just duplicate
 	// them here for migration/compatibility purposes.
-	res.LabelSets = []labelpb.ZLabelSet{}
+	res.LabelSets = []*labelpb.ZLabelSet{}
 	if len(res.Labels) > 0 {
 		res.LabelSets = append(res.LabelSets, labelpb.ZLabelSet{
 			Labels: res.Labels,
@@ -461,7 +461,7 @@ func (p *PrometheusStore) startPromRemoteRead(ctx context.Context, q *prompb.Que
 
 // matchesExternalLabels returns false if given matchers are not matching external labels.
 // If true, matchesExternalLabels also returns Prometheus matchers without those matching external labels.
-func matchesExternalLabels(ms []storepb.LabelMatcher, externalLabels labels.Labels) (bool, []*labels.Matcher, error) {
+func matchesExternalLabels(ms []*storepb.LabelMatcher, externalLabels labels.Labels) (bool, []*labels.Matcher, error) {
 	tms, err := storepb.MatchersToPromMatchers(ms...)
 	if err != nil {
 		return false, nil, err

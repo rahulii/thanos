@@ -22,7 +22,7 @@ require (
 	github.com/efficientgo/e2e v0.11.1-0.20210829161758-f4cc6dbdc6ea
 	github.com/efficientgo/tools/extkingpin v0.0.0-20210609125236-d73259166f20
 	github.com/facette/natsort v0.0.0-20181210072756-2cd4dd1e2dcb
-	github.com/fatih/structtag v1.1.0
+	github.com/fatih/structtag v1.2.0
 	github.com/felixge/fgprof v0.9.1
 	github.com/fortytw2/leaktest v1.3.0
 	github.com/fsnotify/fsnotify v1.4.9
@@ -61,6 +61,7 @@ require (
 	github.com/prometheus/common v0.29.0
 	github.com/prometheus/exporter-toolkit v0.6.0
 	github.com/prometheus/prometheus v1.8.2-0.20210720123808-b1ed4a0a663d
+	github.com/srikrsna/protoc-gen-gotag v0.6.2 // indirect
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.31
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible
