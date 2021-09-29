@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Sat Sep 25 22:23:21 2021
+# Make data base, printed on Wed Sep 29 15:53:36 2021
 
 # Variables
 
@@ -31,7 +31,7 @@ SSH_AGENT_LAUNCHER = gnome-keyring
 # makefile (from 'Makefile', line 47)
 PROTOC_VERSION = 3.4.0
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-2168528b-70be-4d35-99a3-7e25dbd78054.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-387fb275-934a-47e4-be7f-6819cfbd79b4.sock
 # environment
 VSCODE_CWD = /home/infracloud/Desktop/thanos
 # makefile (from '.bingo/Variables.mk', line 126)
@@ -81,7 +81,7 @@ VSCODE_CODE_CACHE_PATH = /home/infracloud/.config/Code/CachedData/3866c3553be8b2
 # environment
 LANG = C
 # environment
-XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.D30390
+XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.XTFTA1
 # makefile (from '.bingo/Variables.mk', line 38)
 GO_BINDATA := /home/infracloud/go/bin/go-bindata-v3.1.1+incompatible
 # default
@@ -89,7 +89,7 @@ GO_BINDATA := /home/infracloud/go/bin/go-bindata-v3.1.1+incompatible
 # default
 .INCLUDE_DIRS = /usr/local/include /usr/include /usr/include
 # environment
-GNOME_TERMINAL_SERVICE = :1.441
+GNOME_TERMINAL_SERVICE = :1.5309
 # makefile
 MAKEFLAGS = pqrR
 # makefile
@@ -141,7 +141,7 @@ VSCODE_VERBOSE_LOGGING = true
 # makefile (from 'Makefile', line 3)
 MD_FILES_TO_FORMAT = $(shell find docs -name "*.md") $(shell find examples -name "*.md") $(filter-out mixin/runbook.md, $(shell find mixin -name "*.md")) $(shell ls *.md)
 # environment
-VSCODE_PID = 916831
+VSCODE_PID = 2685844
 # environment
 XDG_SESSION_TYPE = wayland
 # automatic
@@ -151,7 +151,7 @@ ME = $(shell whoami)
 # makefile (from '.bingo/Variables.mk', line 98)
 MINIO := /home/infracloud/go/bin/minio-v0.0.0-20200527010300-cccf2de129da
 # environment
-SESSION_MANAGER = local/infracloud-ThinkPad-E15-Gen-2:@/tmp/.ICE-unix/1683,unix/infracloud-ThinkPad-E15-Gen-2:/tmp/.ICE-unix/1683
+SESSION_MANAGER = local/infracloud-ThinkPad-E15-Gen-2:@/tmp/.ICE-unix/2258,unix/infracloud-ThinkPad-E15-Gen-2:/tmp/.ICE-unix/2258
 # automatic
 *F = $(notdir $*)
 # environment
@@ -189,7 +189,7 @@ DOCKER_CI_TAG = test
 # makefile (from '.bingo/Variables.mk', line 86)
 JSONNETFMT := /home/infracloud/go/bin/jsonnetfmt-v0.17.0
 # environment
-GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/6f2c71a3_4fd1_4a05_a548_feb54d41e336
+GNOME_TERMINAL_SCREEN = /org/gnome/Terminal/screen/1b7bde6c_9717_4ab2_962d_7469cb85c6c4
 # environment
 MAKELEVEL := 0
 # default
@@ -219,7 +219,7 @@ PROMETHEUS_ARRAY := /home/infracloud/go/bin/prometheus-v2.4.3+incompatible /home
 # makefile (from 'Makefile', line 33)
 PREFIX = $(GOBIN)
 # environment
-INVOCATION_ID = e4011e7ccdaf4dc39f7c999e552e9f22
+INVOCATION_ID = ae902ba0cfdb4e0887d91e8745d80c25
 # environment
 VSCODE_LOG_NATIVE = false
 # makefile (from 'Makefile', line 358)
@@ -285,8 +285,9 @@ endef
 MAKE_VERSION := 4.3
 # 'override' directive
 .SHELLSTATUS := 0
+ 
 # environment
-MANAGERPID = 1470
+MANAGERPID = 2111
 # makefile (from 'Makefile', line 28)
 TMP_GOPATH = /tmp/thanos-go
 # makefile (from '.bingo/Variables.mk', line 120)
@@ -298,10 +299,9 @@ XDG_RUNTIME_DIR = /run/user/1000
 # environment
 COLORTERM = truecolor
 # makefile (from 'Makefile', line 66)
- 
 REACT_APP_SOURCE_FILES = $(shell find $(REACT_APP_PATH)/public/ $(REACT_APP_PATH)/src/ $(REACT_APP_PATH)/tsconfig.json)
 # environment
-JOURNAL_STREAM = 8:1502690
+JOURNAL_STREAM = 8:25696535
 # environment
 GOMODCACHE = /home/infracloud/go/pkg/mod
 # makefile (from '.bingo/Variables.mk', line 50)
@@ -564,6 +564,7 @@ crossbuild: | /home/infracloud/go/bin/promu-v0.5.0
 #  File does not exist.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 140):
+ 
 	@echo ">> crossbuilding all binaries"
 	$(PROMU) crossbuild -v
 
@@ -608,7 +609,6 @@ mixin/rules/receive.libsonnet:
 
 # Not a target:
 mixin/alerts/store.libsonnet:
- 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -845,6 +845,7 @@ pkg/ui/react-app/src/pages/targets/ScrapePoolList.tsx:
 
 docs: build examples /home/infracloud/go/bin/mdox-v0.2.2-0.20210818122826-f16709a2bc2b
 #  Phony target (prerequisite of .PHONY).
+ 
 #  Implicit rule search has not been done.
 #  File does not exist.
 #  File has not been updated.
@@ -912,7 +913,6 @@ pkg/ui/react-app/src/pages/rules:
 # Not a target:
 Makefile:
 #  Implicit rule search has been done.
- 
 #  Last modified 2021-09-17 22:57:53.089897089
 #  File has been updated.
 #  Successfully updated.
@@ -1126,6 +1126,7 @@ pkg/ui/react-app/src/themes:
 
 # Not a target:
 pkg/ui/react-app/src/pages/graph/Legend.tsx:
+ 
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
@@ -1211,7 +1212,6 @@ pkg/ui/react-app/src/pages/config/Config.tsx:
 #  Implicit rule search has not been done.
 #  Modification time never checked.
 #  File has not been updated.
- 
 
 # Not a target:
 pkg/ui/react-app/src/thanos/pages/blocks/Blocks.tsx:
@@ -1398,6 +1398,7 @@ sync/atomic=go.uber.org/atomic" ./...
 	@$(GOLANGCI_LINT) run
 	@echo ">> ensuring Copyright headers"
 	@go run ./scripts/copyright
+ 
 	@echo ">> ensuring generated proto files are up to date"
 	@$(MAKE) proto
 	$(call require_clean_work_tree,'detected files without copyright, run make lint and commit changes')
@@ -1511,7 +1512,6 @@ test-e2e-local:
 # Not a target:
 pkg/ui/react-app/src/index.tsx:
 #  Implicit rule search has not been done.
- 
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -1682,6 +1682,7 @@ pkg/ui/react-app/src/components/ToggleMoreLess.test.tsx:
 # Not a target:
 pkg/ui/react-app/src/thanos/pages:
 #  Implicit rule search has not been done.
+ 
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -1826,7 +1827,6 @@ pkg/ui/react-app/src/thanos/pages/notFound/NotFound.tsx:
 /home/infracloud/go/bin/alertmanager-v0.20.0: .bingo//alertmanager.mod
 #  Implicit rule search has not been done.
 #  Modification time never checked.
- 
 #  File has not been updated.
 #  recipe to execute (from '.bingo/Variables.mk', line 22):
 	@# Install binary/ries using Go 1.14+ build command. This is using bwplotka/bingo-controlled, separate go module with pinned dependencies.
@@ -1964,6 +1964,7 @@ check-docs: build examples /home/infracloud/go/bin/mdox-v0.2.2-0.20210818122826-
 # Not a target:
 mixin/dashboards/query.libsonnet:
 #  Implicit rule search has not been done.
+ 
 #  Modification time never checked.
 #  File has not been updated.
 
@@ -2134,7 +2135,6 @@ format: go-format shell-format
 # Load=0/32=0%, Rehash=0, Collisions=0/12=0%
 #  recipe to execute (from 'Makefile', line 195):
 	@SED_BIN="$(SED)" scripts/cleanup-white-noise.sh $(FILES_TO_FMT)
- 
 
 # Not a target:
 pkg/ui/react-app/src/vendor/flot/jquery.flot.time.js:
@@ -2242,6 +2242,7 @@ pkg/ui/react-app/src/pages/serviceDiscovery/Services.tsx:
 #  Modification time never checked.
 #  File has not been updated.
 #  recipe to execute (from 'Makefile', line 396):
+ 
 	@mkdir -p $(TMP_GOPATH)
 	@echo ">> fetching protoc@${PROTOC_VERSION}"
 	@PROTOC_VERSION="$(PROTOC_VERSION)" TMP_GOPATH="$(TMP_GOPATH)" scripts/installprotoc.sh
@@ -2481,8 +2482,7 @@ pkg/ui/react-app/src/pages/status/Status.tsx:
 
 # strcache performance: lookups = 712 / hit rate = 49%
 # hash-table stats:
- 
 # Load=358/8192=4%, Rehash=0, Collisions=12/712=2%
-# Finished Make data base on Sat Sep 25 22:23:21 2021
+# Finished Make data base on Wed Sep 29 15:53:36 2021
 
  

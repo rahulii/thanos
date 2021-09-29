@@ -186,12 +186,12 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "addr", Value: addr},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "a", Value: "b"},
 						},
 					},
@@ -203,12 +203,12 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "addr", Value: addr},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "a", Value: "b"},
 						},
 					},
@@ -220,12 +220,12 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "addr", Value: addr},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "a", Value: "b"},
 						},
 					},
@@ -318,13 +318,13 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l3", Value: "v4"},
 						},
 					},
@@ -337,13 +337,13 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l3", Value: "v4"},
 						},
 					},
@@ -355,7 +355,7 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
@@ -369,7 +369,7 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
@@ -383,7 +383,7 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
@@ -398,7 +398,7 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
@@ -412,7 +412,7 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
@@ -440,13 +440,13 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l3", Value: "v4"},
 						},
 					},
@@ -459,18 +459,18 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l3", Value: "v4"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: store.CompatibilityTypeLabelName, Value: "store"},
 						},
 					},
@@ -483,18 +483,18 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l3", Value: "v4"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: store.CompatibilityTypeLabelName, Value: "store"},
 						},
 					},
@@ -506,13 +506,13 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l3", Value: "v4"},
 						},
 					},
@@ -525,13 +525,13 @@ func TestEndpointSet_Update(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l1", Value: "v2"},
 							{Name: "l2", Value: "v3"},
 						},
 					},
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{Name: "l3", Value: "v4"},
 						},
 					},
@@ -590,7 +590,7 @@ func TestEndpointSet_Update_NoneAvailable(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{
 								Name:  "addr",
 								Value: addr,
@@ -605,7 +605,7 @@ func TestEndpointSet_Update_NoneAvailable(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{
 								Name:  "addr",
 								Value: addr,
@@ -664,7 +664,7 @@ func TestEndpoint_Update_QuerierStrict(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{
 								Name:  "addr",
 								Value: addr,
@@ -692,7 +692,7 @@ func TestEndpoint_Update_QuerierStrict(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{
 								Name:  "addr",
 								Value: addr,
@@ -721,7 +721,7 @@ func TestEndpoint_Update_QuerierStrict(t *testing.T) {
 			extlsetFn: func(addr string) []labelpb.ZLabelSet {
 				return []labelpb.ZLabelSet{
 					{
-						Labels: []labelpb.ZLabel{
+						Labels: []*labelpb.Label{
 							{
 								Name:  "addr",
 								Value: addr,

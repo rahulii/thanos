@@ -680,25 +680,25 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
 			expectedIDs: all,
 			expectedAdvLabels: []labelpb.ZLabelSet{
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
 						{Name: "region", Value: "r1"},
 					},
 				},
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
 						{Name: "region", Value: "r2"},
 					},
 				},
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "b"},
 						{Name: "region", Value: "r1"},
 					},
 				},
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: CompatibilityTypeLabelName, Value: "store"},
 					},
 				},
@@ -715,13 +715,13 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
 			expectedIDs: []ulid.ULID{all[2]},
 			expectedAdvLabels: []labelpb.ZLabelSet{
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "b"},
 						{Name: "region", Value: "r1"},
 					},
 				},
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: CompatibilityTypeLabelName, Value: "store"},
 					},
 				},
@@ -738,19 +738,19 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
 			expectedIDs: []ulid.ULID{all[0], all[1], all[3]},
 			expectedAdvLabels: []labelpb.ZLabelSet{
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
 						{Name: "region", Value: "r1"},
 					},
 				},
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
 						{Name: "region", Value: "r2"},
 					},
 				},
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: CompatibilityTypeLabelName, Value: "store"},
 					},
 				},
@@ -771,13 +771,13 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
 			expectedIDs: []ulid.ULID{all[0], all[1]},
 			expectedAdvLabels: []labelpb.ZLabelSet{
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
 						{Name: "region", Value: "r1"},
 					},
 				},
 				{
-					Labels: []labelpb.ZLabel{
+					Labels: []*labelpb.Label{
 						{Name: CompatibilityTypeLabelName, Value: "store"},
 					},
 				},
@@ -1550,7 +1550,7 @@ func TestSeries_RequestAndResponseHints(t *testing.T) {
 			ExpectedSeries: seriesSet1,
 			ExpectedHints: []hintspb.SeriesResponseHints{
 				{
-					QueriedBlocks: []hintspb.Block{
+					QueriedBlocks: []*hintspb.Block{
 						{Id: block1.String()},
 					},
 				},
@@ -1567,7 +1567,7 @@ func TestSeries_RequestAndResponseHints(t *testing.T) {
 			ExpectedSeries: append(append([]*storepb.Series{}, seriesSet1...), seriesSet2...),
 			ExpectedHints: []hintspb.SeriesResponseHints{
 				{
-					QueriedBlocks: []hintspb.Block{
+					QueriedBlocks: []*hintspb.Block{
 						{Id: block1.String()},
 						{Id: block2.String()},
 					},
@@ -1582,7 +1582,7 @@ func TestSeries_RequestAndResponseHints(t *testing.T) {
 					{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "bar"},
 				},
 				Hints: mustMarshalAny(&hintspb.SeriesRequestHints{
-					BlockMatchers: []storepb.LabelMatcher{
+					BlockMatchers: []*storepb.LabelMatcher{
 						{Type: storepb.LabelMatcher_EQ, Name: block.BlockIDLabel, Value: block1.String()},
 					},
 				}),
@@ -1590,7 +1590,7 @@ func TestSeries_RequestAndResponseHints(t *testing.T) {
 			ExpectedSeries: seriesSet1,
 			ExpectedHints: []hintspb.SeriesResponseHints{
 				{
-					QueriedBlocks: []hintspb.Block{
+					QueriedBlocks: []*hintspb.Block{
 						{Id: block1.String()},
 					},
 				},
@@ -1954,7 +1954,7 @@ func TestLabelNamesAndValuesHints(t *testing.T) {
 			},
 			expectedNames: labelNamesFromSeriesSet(seriesSet1),
 			expectedNamesHints: hintspb.LabelNamesResponseHints{
-				QueriedBlocks: []hintspb.Block{
+				QueriedBlocks: []*hintspb.Block{
 					{Id: block1.String()},
 				},
 			},
@@ -1966,7 +1966,7 @@ func TestLabelNamesAndValuesHints(t *testing.T) {
 			},
 			expectedValues: []string{"1"},
 			expectedValuesHints: hintspb.LabelValuesResponseHints{
-				QueriedBlocks: []hintspb.Block{
+				QueriedBlocks: []*hintspb.Block{
 					{Id: block1.String()},
 				},
 			},
@@ -1982,7 +1982,7 @@ func TestLabelNamesAndValuesHints(t *testing.T) {
 				append(append([]*storepb.Series{}, seriesSet1...), seriesSet2...),
 			),
 			expectedNamesHints: hintspb.LabelNamesResponseHints{
-				QueriedBlocks: []hintspb.Block{
+				QueriedBlocks: []*hintspb.Block{
 					{Id: block1.String()},
 					{Id: block2.String()},
 				},
@@ -1995,7 +1995,7 @@ func TestLabelNamesAndValuesHints(t *testing.T) {
 			},
 			expectedValues: []string{"1"},
 			expectedValuesHints: hintspb.LabelValuesResponseHints{
-				QueriedBlocks: []hintspb.Block{
+				QueriedBlocks: []*hintspb.Block{
 					{Id: block1.String()},
 					{Id: block2.String()},
 				},
@@ -2007,14 +2007,14 @@ func TestLabelNamesAndValuesHints(t *testing.T) {
 				Start: 0,
 				End:   3,
 				Hints: mustMarshalAny(&hintspb.LabelNamesRequestHints{
-					BlockMatchers: []storepb.LabelMatcher{
+					BlockMatchers: []*storepb.LabelMatcher{
 						{Type: storepb.LabelMatcher_EQ, Name: block.BlockIDLabel, Value: block1.String()},
 					},
 				}),
 			},
 			expectedNames: labelNamesFromSeriesSet(seriesSet1),
 			expectedNamesHints: hintspb.LabelNamesResponseHints{
-				QueriedBlocks: []hintspb.Block{
+				QueriedBlocks: []*hintspb.Block{
 					{Id: block1.String()},
 				},
 			},
@@ -2024,14 +2024,14 @@ func TestLabelNamesAndValuesHints(t *testing.T) {
 				Start: 0,
 				End:   3,
 				Hints: mustMarshalAny(&hintspb.LabelValuesRequestHints{
-					BlockMatchers: []storepb.LabelMatcher{
+					BlockMatchers: []*storepb.LabelMatcher{
 						{Type: storepb.LabelMatcher_EQ, Name: block.BlockIDLabel, Value: block1.String()},
 					},
 				}),
 			},
 			expectedValues: []string{"1"},
 			expectedValuesHints: hintspb.LabelValuesResponseHints{
-				QueriedBlocks: []hintspb.Block{
+				QueriedBlocks: []*hintspb.Block{
 					{Id: block1.String()},
 				},
 			},

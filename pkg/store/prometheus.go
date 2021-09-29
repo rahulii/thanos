@@ -121,7 +121,7 @@ func (p *PrometheusStore) Info(_ context.Context, _ *storepb.InfoRequest) (*stor
 	// them here for migration/compatibility purposes.
 	res.LabelSets = []*labelpb.ZLabelSet{}
 	if len(res.Labels) > 0 {
-		res.LabelSets = append(res.LabelSets, labelpb.ZLabelSet{
+		res.LabelSets = append(res.LabelSets, &labelpb.ZLabelSet{
 			Labels: res.Labels,
 		})
 	}

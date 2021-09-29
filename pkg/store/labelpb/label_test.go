@@ -142,9 +142,9 @@ func BenchmarkZLabelsMarshalUnmarshal(b *testing.B) {
 
 	b.Run("Label", func(b *testing.B) {
 		b.ReportAllocs()
-		lbls := LabelSet{Labels: make([]Label, 0, num)}
+		lbls := LabelSet{Labels: make([]*Label, 0, num)}
 		for i := 0; i < num; i++ {
-			lbls.Labels = append(lbls.Labels, Label{Name: fmt.Sprintf(fmtLbl, i), Value: fmt.Sprintf(fmtLbl, i)})
+			lbls.Labels = append(lbls.Labels, &Label{Name: fmt.Sprintf(fmtLbl, i), Value: fmt.Sprintf(fmtLbl, i)})
 		}
 		b.ResetTimer()
 
