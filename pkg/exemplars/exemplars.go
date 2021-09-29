@@ -99,7 +99,7 @@ func dedupExemplarsResponse(exemplarsData []*exemplarspb.ExemplarData, replicaLa
 			continue
 		}
 		e.SeriesLabels.Labels = removeReplicaLabels(e.SeriesLabels.Labels, replicaLabels)
-		h := labelpb.ZLabelsToPromLabels(e.SeriesLabels.Labels).Hash()
+		h := labelpb.ProtobufLabelsToPromLabels(e.SeriesLabels.Labels).Hash()
 		if ref, ok := hashToExemplar[h]; ok {
 			ref.Exemplars = append(ref.Exemplars, e.Exemplars...)
 		} else {

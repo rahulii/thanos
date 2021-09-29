@@ -102,7 +102,7 @@ func (t *ActiveTarget) SetLabels(ls labels.Labels) {
 	var result labelpb.ZLabelSet
 
 	if len(ls) > 0 {
-		result = labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(ls)}
+		result = labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ls)}
 	}
 
 	t.Labels = result
@@ -112,7 +112,7 @@ func (t *ActiveTarget) SetDiscoveredLabels(ls labels.Labels) {
 	var result labelpb.ZLabelSet
 
 	if len(ls) > 0 {
-		result = labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(ls)}
+		result = labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ls)}
 	}
 
 	t.DiscoveredLabels = result
@@ -122,7 +122,7 @@ func (t *DroppedTarget) SetDiscoveredLabels(ls labels.Labels) {
 	var result labelpb.ZLabelSet
 
 	if len(ls) > 0 {
-		result = labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(ls)}
+		result = labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ls)}
 	}
 
 	t.DiscoveredLabels = result

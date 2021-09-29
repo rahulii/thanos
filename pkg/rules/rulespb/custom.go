@@ -86,7 +86,7 @@ func (r *Rule) SetLabels(ls labels.Labels) {
 	var result labelpb.ZLabelSet
 
 	if len(ls) > 0 {
-		result = labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(ls)}
+		result = labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ls)}
 	}
 
 	switch {

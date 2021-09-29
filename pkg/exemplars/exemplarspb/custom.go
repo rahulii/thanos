@@ -44,7 +44,7 @@ func (m *Exemplar) MarshalJSON() ([]byte, error) {
 		TimeStamp model.Time        `json:"timestamp"`
 		Value     model.SampleValue `json:"value"`
 	}{
-		Labels:    labelpb.ZLabelsToPromLabels(m.Labels.Labels),
+		Labels:    labelpb.ProtobufLabelsToPromLabels(m.Labels.Labels),
 		TimeStamp: model.Time(m.Ts),
 		Value:     model.SampleValue(m.Value),
 	}
@@ -76,7 +76,7 @@ func (s *ExemplarData) SetSeriesLabels(ls labels.Labels) {
 	var result labelpb.ZLabelSet
 
 	if len(ls) > 0 {
-		result = labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(ls)}
+		result = labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ls)}
 	}
 
 	s.SeriesLabels = result
@@ -101,7 +101,7 @@ func ExemplarsFromPromExemplars(exemplars []exemplar.Exemplar) []*Exemplar {
 	ex := make([]*Exemplar, 0, len(exemplars))
 	for _, e := range exemplars {
 		ex = append(ex, &Exemplar{
-			Labels: labelpb.ZLabelSet{Labels: labelpb.ZLabelsFromPromLabels(e.Labels)},
+			Labels: labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(e.Labels)},
 			Value:  e.Value,
 			Ts:     e.Ts,
 		})

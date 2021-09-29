@@ -53,7 +53,7 @@ func (t *TSDB) Exemplars(matchers [][]*labels.Matcher, start, end int64, s exemp
 	for _, e := range exemplars {
 		exd := exemplarspb.ExemplarData{
 			SeriesLabels: labelpb.ZLabelSet{
-				Labels: labelpb.ZLabelsFromPromLabels(labelpb.ExtendSortedLabels(e.SeriesLabels, t.extLabels)),
+				Labels: labelpb.ProtobufLabelsFromPromLabels(labelpb.ExtendSortedLabels(e.SeriesLabels, t.extLabels)),
 			},
 			Exemplars: exemplarspb.ExemplarsFromPromExemplars(e.Exemplars),
 		}
