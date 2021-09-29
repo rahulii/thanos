@@ -1471,12 +1471,12 @@ func TestRulesHandler(t *testing.T) {
 			Health:                    "x",
 			Query:                     "sum(up2) == 2",
 			DurationSeconds:           101,
-			Labels:                    labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label3"}}},
-			Annotations:               labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "ann", Value: "a1"}}},
+			Labels:                    labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: "some", Value: "label3"}}},
+			Annotations:               labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: "ann", Value: "a1"}}},
 			Alerts: []*rulespb.AlertInstance{
 				{
-					Labels:      labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "1"}}},
-					Annotations: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "2"}}},
+					Labels:      labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: "inside", Value: "1"}}},
+					Annotations: labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: "insideann", Value: "2"}}},
 					State:       rulespb.AlertState_FIRING,
 					ActiveAt:    &twoHAgo,
 					Value:       "1",
@@ -1484,8 +1484,8 @@ func TestRulesHandler(t *testing.T) {
 					PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 				},
 				{
-					Labels:      labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "3"}}},
-					Annotations: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "4"}}},
+					Labels:      labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: "inside", Value: "3"}}},
+					Annotations: labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: "insideann", Value: "4"}}},
 					State:       rulespb.AlertState_PENDING,
 					ActiveAt:    nil,
 					Value:       "2",
@@ -1502,7 +1502,7 @@ func TestRulesHandler(t *testing.T) {
 			Health:                    "x",
 			DurationSeconds:           102,
 			Query:                     "sum(up3) == 3",
-			Labels:                    labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label4"}}},
+			Labels:                    labelpb.ZLabelSet{Labels: []labelpb.ZLabel{{Name: "some", Value: "label4"}}},
 			State:                     rulespb.AlertState_INACTIVE,
 		}),
 	}

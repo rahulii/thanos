@@ -29,7 +29,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 
-	"github.com/thanos-io/thanos/pcomponentkg/"
+	"github.com/thanos-io/thanos/pkg/component"
 	"github.com/thanos-io/thanos/pkg/prober"
 	"github.com/thanos-io/thanos/pkg/tracing"
 )

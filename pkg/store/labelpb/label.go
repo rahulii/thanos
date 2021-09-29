@@ -29,18 +29,24 @@ func noAllocBytes(buf string) []byte {
 	return *(*[]byte)(unsafe.Pointer(&buf))
 }
 
-// ZLabelsFromPromLabels converts Prometheus labels to slice of labelpb.ZLabel in type unsafe manner.
-// It reuses the same memory. Caller should abort using passed labels.Labels.
-func ZLabelsFromPromLabels(lset labels.Labels) []ZLabel {
-	return *(*[]ZLabel)(unsafe.Pointer(&lset))
+// ProtobufLabelsFromPromLabels converts Prometheus labels to a slice pointers to labelpb.Label.
+func ProtobufLabelsFromPromLabels(lset labels.Labels) []*Label {
+	labels := make([]*Label, 0, len(lset))
+	for _, lbl := range lset {
+		labels = append(labels, &Label{Name: lbl.Name, Value: lbl.Value})
+	}
+
+	return labels
 }
 
-// ZLabelsToPromLabels convert slice of labelpb.ZLabel to Prometheus labels in type unsafe manner.
-// It reuses the same memory. Caller should abort using passed []ZLabel.
-// NOTE: Use with care. ZLabels holds memory from the whole protobuf unmarshal, so the returned
-// Prometheus Labels will hold this memory as well.
-func ZLabelsToPromLabels(lset []ZLabel) labels.Labels {
-	return *(*labels.Labels)(unsafe.Pointer(&lset))
+// ProtobufLabelsToPromLabels converts a slice of pointers labelpb.Label to Prometheus labels.
+func ProtobufLabelsToPromLabels(lset []*Label) labels.Labels {
+	promLabels := make([]labels.Label, 0, len(lset))
+	for _, lbl := range lset {
+		promLabels = append(promLabels, labels.Label{Name: lbl.Name, Value: lbl.Value})
+	}
+
+	return promLabels
 }
 
 // ReAllocZLabelsStrings re-allocates all underlying bytes for string, detaching it from bigger memory pool.
@@ -249,6 +255,14 @@ func (m *ZLabel) Compare(other ZLabel) int {
 	return strings.Compare(m.Value, other.Value)
 }
 
+// Compare compares two labels.
+func (m *Label) Compare(other *Label) int {
+	if c := strings.Compare(m.Name, other.Name); c != 0 {
+		return c
+	}
+	return strings.Compare(m.Value, other.Value)
+}
+
 // ExtendSortedLabels extend given labels by extend in labels format.
 // The type conversion is done safely, which means we don't modify extend labels underlying array.
 //
@@ -295,7 +309,7 @@ func (m *ZLabelSet) UnmarshalJSON(entry []byte) error {
 		return errors.Wrapf(err, "labels: labels field unmarshal: %v", string(entry))
 	}
 	sort.Sort(lbls)
-	m.Labels = ZLabelsFromPromLabels(lbls)
+	m.Labels = ProtobufLabelsFromPromLabels(lbls)
 	return nil
 }
 
@@ -305,7 +319,7 @@ func (m *ZLabelSet) MarshalJSON() ([]byte, error) {
 
 // PromLabels return Prometheus labels.Labels without extra allocation.
 func (m *ZLabelSet) PromLabels() labels.Labels {
-	return ZLabelsToPromLabels(m.Labels)
+	return ProtobufLabelsToPromLabels(m.Labels)
 }
 
 // DeepCopy copies labels and each label's string to separate bytes.
