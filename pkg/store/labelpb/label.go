@@ -50,7 +50,7 @@ func ProtobufLabelsToPromLabels(lset []*Label) labels.Labels {
 }
 
 // ReAllocZLabelsStrings re-allocates all underlying bytes for string, detaching it from bigger memory pool.
-func ReAllocZLabelsStrings(lset *[]ZLabel) {
+func ReAllocZLabelsStrings(lset *[]*Label) {
 	for j, l := range *lset {
 		// NOTE: This trick converts from string to byte without copy, but copy when creating string.
 		(*lset)[j].Name = string(noAllocBytes(l.Name))

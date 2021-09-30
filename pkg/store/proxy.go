@@ -160,7 +160,7 @@ func (s *ProxyStore) Info(_ context.Context, _ *storepb.InfoRequest) (*storepb.I
 	// store-proxy's discovered stores, then we still want to enforce
 	// announcing this subset by announcing the selector as the label-set.
 	if len(res.LabelSets) == 0 && len(res.Labels) > 0 {
-		res.LabelSets = append(res.LabelSets, labelpb.ZLabelSet{Labels: res.Labels})
+		res.LabelSets = append(res.LabelSets, &labelpb.ZLabelSet{Labels: res.Labels})
 	}
 
 	return res, nil
@@ -483,7 +483,7 @@ func (s *streamSeriesSet) Next() (ok bool) {
 	return ok
 }
 
-func (s *streamSeriesSet) At() (labels.Labels, []storepb.AggrChunk) {
+func (s *streamSeriesSet) At() (labels.Labels, []*storepb.AggrChunk) {
 	if s.currSeries == nil {
 		return nil, nil
 	}

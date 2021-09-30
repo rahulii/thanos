@@ -112,8 +112,8 @@ type storeSeriesSet struct {
 	i      int
 }
 
-func newStoreSeriesSet(s []storepb.Series) *storeSeriesSet {
-	return &storeSeriesSet{series: s, i: -1}
+func newStoreSeriesSet(s []storepb.Series) storeSeriesSet {
+	return storeSeriesSet{series: s, i: -1}
 }
 
 func (s *storeSeriesSet) Next() bool {

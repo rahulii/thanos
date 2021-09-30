@@ -33,6 +33,8 @@ for dir in ${DIRS}; do
     -I=. \
     -I="${GOGOPROTO_PATH}" \
     ${dir}/*.proto
+  protoc-go-inject-tag -input=${dir}/*pb.go
+  
 
   pushd ${dir}
   sed -i.bak -E 's/import _ \"gogoproto\"//g' *.pb.go

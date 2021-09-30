@@ -1160,7 +1160,7 @@ func (s *BucketStore) Series(req *storepb.SeriesRequest, srv storepb.Store_Serie
 	return err
 }
 
-func chunksSize(chks []storepb.AggrChunk) (size int) {
+func chunksSize(chks []*storepb.AggrChunk) (size int) {
 	for _, chk := range chks {
 		size += chk.Size() // This gets the encoded proto size.
 	}
