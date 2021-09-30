@@ -334,15 +334,15 @@ func TestReceiveQuorum(t *testing.T) {
 	conflictErrFn := func() error { return storage.ErrOutOfBounds }
 	commitErrFn := func() error { return errors.New("failed to commit") }
 	wreq1 := &prompb.WriteRequest{
-		Timeseries: []prompb.TimeSeries{
+		Timeseries: []*prompb.TimeSeries{
 			{
-				Labels: []labelpb.ZLabel{
+				Labels: []*labelpb.Label{
 					{
 						Name:  "foo",
 						Value: "bar",
 					},
 				},
-				Samples: []prompb.Sample{
+				Samples: []*prompb.Sample{
 					{
 						Value:     1,
 						Timestamp: 1,
@@ -670,15 +670,15 @@ func TestReceiveWithConsistencyDelay(t *testing.T) {
 	conflictErrFn := func() error { return storage.ErrOutOfBounds }
 	commitErrFn := func() error { return errors.New("failed to commit") }
 	wreq1 := &prompb.WriteRequest{
-		Timeseries: []prompb.TimeSeries{
+		Timeseries: []*prompb.TimeSeries{
 			{
-				Labels: []labelpb.ZLabel{
+				Labels: []*labelpb.Label{
 					{
 						Name:  "foo",
 						Value: "bar",
 					},
 				},
-				Samples: []prompb.Sample{
+				Samples: []*prompb.Sample{
 					{
 						Value:     1,
 						Timestamp: 1,

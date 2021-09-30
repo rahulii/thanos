@@ -183,7 +183,7 @@ func BenchmarkTransformWithAndWithoutCopy(b *testing.B) {
 		num    = 1000000
 	)
 
-	b.Run("ZLabelsToPromLabels", func(b *testing.B) {
+	b.Run("ProtobufLabelsToPromLabels", func(b *testing.B) {
 		b.ReportAllocs()
 		lbls := make([]ZLabel, num)
 		for i := 0; i < num; i++ {
@@ -195,7 +195,7 @@ func BenchmarkTransformWithAndWithoutCopy(b *testing.B) {
 			ret = ProtobufLabelsToPromLabels(lbls)
 		}
 	})
-	b.Run("ZLabelsToPromLabelsWithRealloc", func(b *testing.B) {
+	b.Run("ProtobufLabelsToPromLabelsWithRealloc", func(b *testing.B) {
 		b.ReportAllocs()
 		lbls := make([]ZLabel, num)
 		for i := 0; i < num; i++ {
@@ -355,13 +355,13 @@ func TestSortZLabelSets(t *testing.T) {
 }
 
 func TestHashWithPrefix(t *testing.T) {
-	lbls := []ZLabel{
+	lbls := []*Label{
 		{Name: "foo", Value: "bar"},
 		{Name: "baz", Value: "qux"},
 	}
 	testutil.Equals(t, HashWithPrefix("a", lbls), HashWithPrefix("a", lbls))
-	testutil.Assert(t, HashWithPrefix("a", lbls) != HashWithPrefix("a", []ZLabel{lbls[0]}))
-	testutil.Assert(t, HashWithPrefix("a", lbls) != HashWithPrefix("a", []ZLabel{lbls[1], lbls[0]}))
+	testutil.Assert(t, HashWithPrefix("a", lbls) != HashWithPrefix("a", []*Label{lbls[0]}))
+	testutil.Assert(t, HashWithPrefix("a", lbls) != HashWithPrefix("a", []*Label{lbls[1], lbls[0]}))
 	testutil.Assert(t, HashWithPrefix("a", lbls) != HashWithPrefix("b", lbls))
 }
 

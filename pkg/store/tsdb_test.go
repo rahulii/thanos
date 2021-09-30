@@ -324,7 +324,7 @@ func TestTSDBStore_LabelValues(t *testing.T) {
 		timestamp      int64
 		start          func() int64
 		end            func() int64
-		Matchers       []storepb.LabelMatcher
+		Matchers       []*storepb.LabelMatcher
 	}{
 		{
 			title:       "no label in tsdb",
@@ -375,7 +375,7 @@ func TestTSDBStore_LabelValues(t *testing.T) {
 			end: func() int64 {
 				return timestamp.FromTime(maxTime)
 			},
-			Matchers: []storepb.LabelMatcher{
+			Matchers: []*storepb.LabelMatcher{
 				{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "test1"},
 			},
 		},
@@ -390,7 +390,7 @@ func TestTSDBStore_LabelValues(t *testing.T) {
 			end: func() int64 {
 				return timestamp.FromTime(maxTime)
 			},
-			Matchers: []storepb.LabelMatcher{
+			Matchers: []*storepb.LabelMatcher{
 				{Type: storepb.LabelMatcher_EQ, Name: "foo", Value: "test2"},
 			},
 		},
@@ -824,16 +824,16 @@ func benchTSDBStoreSeries(t testutil.TB, totalSamples, totalSeries int) {
 			// Add external labels & frame it.
 			s := r.GetSeries()
 			bytesLeftForChunks := store.maxBytesPerFrame
-			lbls := make([]labelpb.ZLabel, 0, len(s.Labels)+len(extLabels))
+			lbls := make([]*labelpb.Label, 0, len(s.Labels)+len(extLabels))
 			for _, l := range s.Labels {
-				lbls = append(lbls, labelpb.ZLabel{
+				lbls = append(lbls, &labelpb.Label{
 					Name:  l.Name,
 					Value: l.Value,
 				})
 				bytesLeftForChunks -= lbls[len(lbls)-1].Size()
 			}
 			for _, l := range extLabels {
-				lbls = append(lbls, labelpb.ZLabel{
+				lbls = append(lbls, &labelpb.Label{
 					Name:  l.Name,
 					Value: l.Value,
 				})

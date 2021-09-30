@@ -282,7 +282,7 @@ func TestQueryLabelNames(t *testing.T) {
 		return len(res) == 0
 	})
 
-	labelNames(t, ctx, q.HTTPEndpoint(), []storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "up"}},
+	labelNames(t, ctx, q.HTTPEndpoint(), []*storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "up"}},
 		timestamp.FromTime(now.Add(-time.Hour)), timestamp.FromTime(now.Add(time.Hour)), func(res []string) bool {
 			// Expected result: [__name__, instance, job, prometheus, replica, receive, tenant_id]
 			// Pre-labelnames pushdown we've done Select() over all series and picked out the label names hence they all had external labels.
@@ -292,7 +292,7 @@ func TestQueryLabelNames(t *testing.T) {
 	)
 
 	// There is no matched series.
-	labelNames(t, ctx, q.HTTPEndpoint(), []storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "foobar"}},
+	labelNames(t, ctx, q.HTTPEndpoint(), []*storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "foobar"}},
 		timestamp.FromTime(now.Add(-time.Hour)), timestamp.FromTime(now.Add(time.Hour)), func(res []string) bool {
 			return len(res) == 0
 		},
@@ -333,13 +333,13 @@ func TestQueryLabelValues(t *testing.T) {
 		return len(res) == 0
 	})
 
-	labelValues(t, ctx, q.HTTPEndpoint(), "__name__", []storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "up"}},
+	labelValues(t, ctx, q.HTTPEndpoint(), "__name__", []*storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "up"}},
 		timestamp.FromTime(now.Add(-time.Hour)), timestamp.FromTime(now.Add(time.Hour)), func(res []string) bool {
 			return len(res) == 1 && res[0] == "up"
 		},
 	)
 
-	labelValues(t, ctx, q.HTTPEndpoint(), "__name__", []storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "foobar"}},
+	labelValues(t, ctx, q.HTTPEndpoint(), "__name__", []*storepb.LabelMatcher{{Type: storepb.LabelMatcher_EQ, Name: "__name__", Value: "foobar"}},
 		timestamp.FromTime(now.Add(-time.Hour)), timestamp.FromTime(now.Add(time.Hour)), func(res []string) bool {
 			return len(res) == 0
 		},
@@ -516,10 +516,7 @@ config:
 								Name:  "TestAlert_AbortOnPartialResponse",
 								State: rulespb.AlertState_FIRING,
 								Query: "absent(some_metric)",
-								Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label
-									
-									
-									{
+								Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
 									{Name: "prometheus", Value: "p1"},
 									{Name: "severity", Value: "page"},
 								}},
@@ -619,7 +616,7 @@ func queryAndAssert(t *testing.T, ctx context.Context, addr, q string, opts prom
 	testutil.Equals(t, expected, result)
 }
 
-func labelNames(t *testing.T, ctx context.Context, addr string, matchers []storepb.LabelMatcher, start, end int64, check func(res []string) bool) {
+func labelNames(t *testing.T, ctx context.Context, addr string, matchers []*storepb.LabelMatcher, start, end int64, check func(res []string) bool) {
 	t.Helper()
 
 	logger := log.NewLogfmtLogger(os.Stdout)
@@ -638,7 +635,7 @@ func labelNames(t *testing.T, ctx context.Context, addr string, matchers []store
 }
 
 //nolint:unparam
-func labelValues(t *testing.T, ctx context.Context, addr, label string, matchers []storepb.LabelMatcher, start, end int64, check func(res []string) bool) {
+func labelValues(t *testing.T, ctx context.Context, addr, label string, matchers []*storepb.LabelMatcher, start, end int64, check func(res []string) bool) {
 	t.Helper()
 
 	logger := log.NewLogfmtLogger(os.Stdout)

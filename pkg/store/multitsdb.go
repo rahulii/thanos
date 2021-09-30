@@ -148,7 +148,7 @@ func (s *tenantSeriesSetServer) Send(r *storepb.SeriesResponse) error {
 	}
 
 	// TODO(bwplotka): Consider avoid copying / learn why it has to copied.
-	chunks := make([]storepb.AggrChunk, len(series.Chunks))
+	chunks := make([]*storepb.AggrChunk, len(series.Chunks))
 	copy(chunks, series.Chunks)
 
 	// For series, pass it to our AggChunkSeriesSet.
@@ -180,7 +180,7 @@ func (s *tenantSeriesSetServer) Next() (ok bool) {
 	return ok
 }
 
-func (s *tenantSeriesSetServer) At() (labels.Labels, []storepb.AggrChunk) {
+func (s *tenantSeriesSetServer) At() (labels.Labels, []*storepb.AggrChunk) {
 	if s.cur == nil {
 		return nil, nil
 	}
@@ -245,7 +245,7 @@ func (s *MultiTSDBStore) Series(r *storepb.SeriesRequest, srv storepb.Store_Seri
 		for mergedSet.Next() {
 			lset, chks := mergedSet.At()
 			respSender.send(storepb.NewSeriesResponse(&storepb.Series{
-				Labels: labelpb.ZLabelsFromPromLabels(lset),
+				Labels: labelpb.ProtobufLabelsFromPromLabels(lset),
 				Chunks: chks,
 			}))
 		}
