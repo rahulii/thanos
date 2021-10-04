@@ -283,7 +283,7 @@ func (s *storeSeriesServer) Context() context.Context {
 var (
 	expectedFooRespExemplars = []exemplarspb.ExemplarData{
 		{
-			SeriesLabels: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "a", Value: "1"}, {Name: "b", Value: "2"}, {Name: "replica", Value: "01"}, {Name: "tenant_id", Value: "foo"}}},
+			SeriesLabels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "a", Value: "1"}, {Name: "b", Value: "2"}, {Name: "replica", Value: "01"}, {Name: "tenant_id", Value: "foo"}}},
 			Exemplars: []*exemplarspb.Exemplar{
 				{Value: 1, Ts: 1},
 				{Value: 2.1212, Ts: 2},
@@ -293,11 +293,11 @@ var (
 	}
 	expectedBarRespExemplars = []exemplarspb.ExemplarData{
 		{
-			SeriesLabels: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "a", Value: "1"}, {Name: "b", Value: "2"}, {Name: "replica", Value: "01"}, {Name: "tenant_id", Value: "bar"}}},
+			SeriesLabels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "a", Value: "1"}, {Name: "b", Value: "2"}, {Name: "replica", Value: "01"}, {Name: "tenant_id", Value: "bar"}}},
 			Exemplars: []*exemplarspb.Exemplar{
-				{Value: 11, Ts: 1, Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "traceID", Value: "abc"}}}},
-				{Value: 22.1212, Ts: 2, Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "traceID", Value: "def"}}}},
-				{Value: 33.1313, Ts: 3, Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "traceID", Value: "ghi"}}}},
+				{Value: 11, Ts: 1, Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "traceID", Value: "abc"}}}},
+				{Value: 22.1212, Ts: 2, Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "traceID", Value: "def"}}}},
+				{Value: 33.1313, Ts: 3, Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "traceID", Value: "ghi"}}}},
 			},
 		},
 	}

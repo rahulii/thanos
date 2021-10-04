@@ -22,7 +22,7 @@ type ExemplarStore struct {
 // UnmarshalJSON implements json.Unmarshaler.
 func (m *Exemplar) UnmarshalJSON(b []byte) error {
 	v := struct {
-		Labels    labelpb.ZLabelSet
+		Labels    *labelpb.ZLabelSet
 		TimeStamp model.Time
 		Value     model.SampleValue
 	}{}
@@ -79,7 +79,7 @@ func (s *ExemplarData) SetSeriesLabels(ls labels.Labels) {
 		result = labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ls)}
 	}
 
-	s.SeriesLabels = result
+	s.SeriesLabels = &result
 }
 
 // Compare is used for sorting and comparing exemplars. Start from timestamp, then labels, finally values.
@@ -101,7 +101,7 @@ func ExemplarsFromPromExemplars(exemplars []exemplar.Exemplar) []*Exemplar {
 	ex := make([]*Exemplar, 0, len(exemplars))
 	for _, e := range exemplars {
 		ex = append(ex, &Exemplar{
-			Labels: labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(e.Labels)},
+			Labels: &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(e.Labels)},
 			Value:  e.Value,
 			Ts:     e.Ts,
 		})
