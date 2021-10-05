@@ -71,7 +71,7 @@ func LabelsToPromLabels(lset []Label) labels.Labels {
 }
 
 // ZLabelSetsToPromLabelSets converts slice of labelpb.ZLabelSet to slice of Prometheus labels.
-func ZLabelSetsToPromLabelSets(lss ...ZLabelSet) []labels.Labels {
+func ZLabelSetsToPromLabelSets(lss ...*ZLabelSet) []labels.Labels {
 	res := make([]labels.Labels, 0, len(lss))
 	for _, ls := range lss {
 		res = append(res, ls.PromLabels())
@@ -361,7 +361,7 @@ func HashWithPrefix(prefix string, lbls []*Label) uint64 {
 }
 
 // ZLabelSets is a sortable list of ZLabelSet. It assumes the label pairs in each ZLabelSet element are already sorted.
-type ZLabelSets []ZLabelSet
+type ZLabelSets []*ZLabelSet
 
 func (z ZLabelSets) Len() int { return len(z) }
 

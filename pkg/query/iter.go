@@ -112,8 +112,8 @@ type storeSeriesSet struct {
 	i      int
 }
 
-func newStoreSeriesSet(s []storepb.Series) storeSeriesSet {
-	return storeSeriesSet{series: s, i: -1}
+func newStoreSeriesSet(s []storepb.Series) *storeSeriesSet {
+	return &storeSeriesSet{series: s, i: -1}
 }
 
 func (s *storeSeriesSet) Next() bool {
@@ -124,11 +124,11 @@ func (s *storeSeriesSet) Next() bool {
 	return true
 }
 
-func (storeSeriesSet) Err() error {
+func (*storeSeriesSet) Err() error {
 	return nil
 }
 
-func (s storeSeriesSet) At() (labels.Labels, []*storepb.AggrChunk) {
+func (s *storeSeriesSet) At() (labels.Labels, []*storepb.AggrChunk) {
 	return s.series[s.i].PromLabels(), s.series[s.i].Chunks
 }
 
