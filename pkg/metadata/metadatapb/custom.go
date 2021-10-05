@@ -24,5 +24,5 @@ func NewWarningMetadataResponse(warning error) *MetricMetadataResponse {
 }
 
 func FromMetadataMap(m map[string][]Meta) *MetricMetadata {
-	return &MetricMetadata{Metadata: *(*map[string]MetricMetadataEntry)(unsafe.Pointer(&m))}
+	return &MetricMetadata{Metadata: *(*map[string]*MetricMetadataEntry)(unsafe.Pointer(&m))}
 }

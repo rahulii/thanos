@@ -190,11 +190,13 @@ func (*ExemplarsResponse) XXX_OneofWrappers() []interface{} {
 }
 
 type ExemplarData struct {
-	SeriesLabels         *labelpb.ZLabelSet `protobuf:"bytes,1,opt,name=seriesLabels,proto3" json:"seriesLabels,omitempty"`
-	Exemplars            []*Exemplar        `protobuf:"bytes,2,rep,name=exemplars,proto3" json:"exemplars,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
-	XXX_unrecognized     []byte             `json:"-"`
-	XXX_sizecache        int32              `json:"-"`
+	// @gotags: json:"seriesLabels"
+	SeriesLabels *labelpb.ZLabelSet `protobuf:"bytes,1,opt,name=seriesLabels,proto3" json:"seriesLabels"`
+	// @gotags: json:"exemplars"
+	Exemplars            []*Exemplar `protobuf:"bytes,2,rep,name=exemplars,proto3" json:"exemplars"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
 }
 
 func (m *ExemplarData) Reset()         { *m = ExemplarData{} }
@@ -245,12 +247,15 @@ func (m *ExemplarData) GetExemplars() []*Exemplar {
 }
 
 type Exemplar struct {
-	Labels               *labelpb.ZLabelSet `protobuf:"bytes,1,opt,name=labels,proto3" json:"labels,omitempty"`
-	Value                float64            `protobuf:"fixed64,2,opt,name=value,proto3" json:"value,omitempty"`
-	Ts                   int64              `protobuf:"varint,3,opt,name=ts,proto3" json:"ts,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
-	XXX_unrecognized     []byte             `json:"-"`
-	XXX_sizecache        int32              `json:"-"`
+	// @gotags: json:"labels"
+	Labels *labelpb.ZLabelSet `protobuf:"bytes,1,opt,name=labels,proto3" json:"labels"`
+	// @gotags: json:"value"
+	Value float64 `protobuf:"fixed64,2,opt,name=value,proto3" json:"value"`
+	// @gotags: json:"timestamp"
+	Ts                   int64    `protobuf:"varint,3,opt,name=ts,proto3" json:"timestamp"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Exemplar) Reset()         { *m = Exemplar{} }

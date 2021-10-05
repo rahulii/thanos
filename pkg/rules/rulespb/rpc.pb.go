@@ -7,28 +7,23 @@ import (
 	context "context"
 	encoding_binary "encoding/binary"
 	fmt "fmt"
-
-	_ "github.com/gogo/protobuf/gogoproto"
-	proto "github.com/gogo/protobuf/proto"
-	github_com_gogo_protobuf_types "github.com/gogo/protobuf/types"
-	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
-
+	protobuf "google/protobuf"
 	io "io"
 	math "math"
 	math_bits "math/bits"
-	time "time"
 
+	proto "github.com/gogo/protobuf/proto"
 	labelpb "github.com/thanos-io/thanos/pkg/store/labelpb"
 	storepb "github.com/thanos-io/thanos/pkg/store/storepb"
+	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
-var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -108,6 +103,9 @@ func (RulesRequest_Type) EnumDescriptor() ([]byte, []int) {
 type RulesRequest struct {
 	Type                    RulesRequest_Type               `protobuf:"varint,1,opt,name=type,proto3,enum=thanos.RulesRequest_Type" json:"type,omitempty"`
 	PartialResponseStrategy storepb.PartialResponseStrategy `protobuf:"varint,2,opt,name=partial_response_strategy,json=partialResponseStrategy,proto3,enum=thanos.PartialResponseStrategy" json:"partial_response_strategy,omitempty"`
+	XXX_NoUnkeyedLiteral    struct{}                        `json:"-"`
+	XXX_unrecognized        []byte                          `json:"-"`
+	XXX_sizecache           int32                           `json:"-"`
 }
 
 func (m *RulesRequest) Reset()         { *m = RulesRequest{} }
@@ -143,11 +141,28 @@ func (m *RulesRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RulesRequest proto.InternalMessageInfo
 
+func (m *RulesRequest) GetType() RulesRequest_Type {
+	if m != nil {
+		return m.Type
+	}
+	return RulesRequest_ALL
+}
+
+func (m *RulesRequest) GetPartialResponseStrategy() storepb.PartialResponseStrategy {
+	if m != nil {
+		return m.PartialResponseStrategy
+	}
+	return storepb.PartialResponseStrategy_WARN
+}
+
 type RulesResponse struct {
 	// Types that are valid to be assigned to Result:
 	//	*RulesResponse_Group
 	//	*RulesResponse_Warning
-	Result isRulesResponse_Result `protobuf_oneof:"result"`
+	Result               isRulesResponse_Result `protobuf_oneof:"result"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
 }
 
 func (m *RulesResponse) Reset()         { *m = RulesResponse{} }
@@ -235,7 +250,11 @@ func (*RulesResponse) XXX_OneofWrappers() []interface{} {
 ///
 /// For rule parsing from YAML configuration other struct is used: https://github.com/prometheus/prometheus/blob/20b1f596f6fb16107ef0c244d240b0ad6da36829/pkg/rulefmt/rulefmt.go#L105
 type RuleGroups struct {
-	Groups []*RuleGroup `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups"`
+	// @gotags: json:"groups"
+	Groups               []*RuleGroup `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups"`
+	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
+	XXX_unrecognized     []byte       `json:"-"`
+	XXX_sizecache        int32        `json:"-"`
 }
 
 func (m *RuleGroups) Reset()         { *m = RuleGroups{} }
@@ -271,16 +290,33 @@ func (m *RuleGroups) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RuleGroups proto.InternalMessageInfo
 
+func (m *RuleGroups) GetGroups() []*RuleGroup {
+	if m != nil {
+		return m.Groups
+	}
+	return nil
+}
+
 /// RuleGroup has info for rules which are part of a group.
 type RuleGroup struct {
-	Name                      string    `protobuf:"bytes,1,opt,name=name,proto3" json:"name"`
-	File                      string    `protobuf:"bytes,2,opt,name=file,proto3" json:"file"`
-	Rules                     []*Rule   `protobuf:"bytes,3,rep,name=rules,proto3" json:"rules"`
-	Interval                  float64   `protobuf:"fixed64,4,opt,name=interval,proto3" json:"interval"`
-	EvaluationDurationSeconds float64   `protobuf:"fixed64,5,opt,name=evaluation_duration_seconds,json=evaluationDurationSeconds,proto3" json:"evaluationTime"`
-	LastEvaluation            time.Time `protobuf:"bytes,6,opt,name=last_evaluation,json=lastEvaluation,proto3,stdtime" json:"lastEvaluation"`
+	// @gotags: json:"name"
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name"`
+	// @gotags: json:"file"
+	File string `protobuf:"bytes,2,opt,name=file,proto3" json:"file"`
+	// @gotags: json:"rules"
+	Rules []*Rule `protobuf:"bytes,3,rep,name=rules,proto3" json:"rules"`
+	// @gotags: json:"interval"
+	Interval float64 `protobuf:"fixed64,4,opt,name=interval,proto3" json:"interval"`
+	// @gotags: json:"evaluationTime"
+	EvaluationDurationSeconds float64 `protobuf:"fixed64,5,opt,name=evaluation_duration_seconds,json=evaluationDurationSeconds,proto3" json:"evaluationTime"`
+	// @gotags: json:"lastEvaluation"
+	LastEvaluation *protobuf.Timestamp `protobuf:"bytes,6,opt,name=last_evaluation,json=lastEvaluation,proto3" json:"lastEvaluation"`
 	// Thanos specific.
+	// @gotags: json:"partialResponseStrategy"
 	PartialResponseStrategy storepb.PartialResponseStrategy `protobuf:"varint,8,opt,name=PartialResponseStrategy,proto3,enum=thanos.PartialResponseStrategy" json:"partialResponseStrategy"`
+	XXX_NoUnkeyedLiteral    struct{}                        `json:"-"`
+	XXX_unrecognized        []byte                          `json:"-"`
+	XXX_sizecache           int32                           `json:"-"`
 }
 
 func (m *RuleGroup) Reset()         { *m = RuleGroup{} }
@@ -316,11 +352,63 @@ func (m *RuleGroup) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RuleGroup proto.InternalMessageInfo
 
+func (m *RuleGroup) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *RuleGroup) GetFile() string {
+	if m != nil {
+		return m.File
+	}
+	return ""
+}
+
+func (m *RuleGroup) GetRules() []*Rule {
+	if m != nil {
+		return m.Rules
+	}
+	return nil
+}
+
+func (m *RuleGroup) GetInterval() float64 {
+	if m != nil {
+		return m.Interval
+	}
+	return 0
+}
+
+func (m *RuleGroup) GetEvaluationDurationSeconds() float64 {
+	if m != nil {
+		return m.EvaluationDurationSeconds
+	}
+	return 0
+}
+
+func (m *RuleGroup) GetLastEvaluation() *protobuf.Timestamp {
+	if m != nil {
+		return m.LastEvaluation
+	}
+	return nil
+}
+
+func (m *RuleGroup) GetPartialResponseStrategy() storepb.PartialResponseStrategy {
+	if m != nil {
+		return m.PartialResponseStrategy
+	}
+	return storepb.PartialResponseStrategy_WARN
+}
+
 type Rule struct {
 	// Types that are valid to be assigned to Result:
 	//	*Rule_Recording
 	//	*Rule_Alert
-	Result isRule_Result `protobuf_oneof:"result"`
+	Result               isRule_Result `protobuf_oneof:"result"`
+	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
+	XXX_unrecognized     []byte        `json:"-"`
+	XXX_sizecache        int32         `json:"-"`
 }
 
 func (m *Rule) Reset()         { *m = Rule{} }
@@ -402,13 +490,22 @@ func (*Rule) XXX_OneofWrappers() []interface{} {
 }
 
 type AlertInstance struct {
-	Labels      labelpb.ZLabelSet `protobuf:"bytes,1,opt,name=labels,proto3" json:"labels"`
-	Annotations labelpb.ZLabelSet `protobuf:"bytes,2,opt,name=annotations,proto3" json:"annotations"`
-	State       AlertState        `protobuf:"varint,3,opt,name=state,proto3,enum=thanos.AlertState" json:"state"`
-	ActiveAt    *time.Time        `protobuf:"bytes,4,opt,name=active_at,json=activeAt,proto3,stdtime" json:"activeAt,omitempty"`
-	Value       string            `protobuf:"bytes,5,opt,name=value,proto3" json:"value"`
+	// @gotags: json:"labels"
+	Labels *labelpb.ZLabelSet `protobuf:"bytes,1,opt,name=labels,proto3" json:"labels"`
+	// @gotags: json:"annotations"
+	Annotations *labelpb.ZLabelSet `protobuf:"bytes,2,opt,name=annotations,proto3" json:"annotations"`
+	// @gotags: json:"state"
+	State AlertState `protobuf:"varint,3,opt,name=state,proto3,enum=thanos.AlertState" json:"state"`
+	// @gotags: json:"activeAt,omitempty"
+	ActiveAt *protobuf.Timestamp `protobuf:"bytes,4,opt,name=active_at,json=activeAt,proto3" json:"activeAt,omitempty"`
+	// @gotags: json:"value"
+	Value string `protobuf:"bytes,5,opt,name=value,proto3" json:"value"`
 	// Thanos specific. Used mainly for alert API purposes.
+	// @gotags: json:"partialResponseStrategy"
 	PartialResponseStrategy storepb.PartialResponseStrategy `protobuf:"varint,6,opt,name=PartialResponseStrategy,proto3,enum=thanos.PartialResponseStrategy" json:"partialResponseStrategy"`
+	XXX_NoUnkeyedLiteral    struct{}                        `json:"-"`
+	XXX_unrecognized        []byte                          `json:"-"`
+	XXX_sizecache           int32                           `json:"-"`
 }
 
 func (m *AlertInstance) Reset()         { *m = AlertInstance{} }
@@ -444,19 +541,75 @@ func (m *AlertInstance) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AlertInstance proto.InternalMessageInfo
 
+func (m *AlertInstance) GetLabels() *labelpb.ZLabelSet {
+	if m != nil {
+		return m.Labels
+	}
+	return nil
+}
+
+func (m *AlertInstance) GetAnnotations() *labelpb.ZLabelSet {
+	if m != nil {
+		return m.Annotations
+	}
+	return nil
+}
+
+func (m *AlertInstance) GetState() AlertState {
+	if m != nil {
+		return m.State
+	}
+	return AlertState_INACTIVE
+}
+
+func (m *AlertInstance) GetActiveAt() *protobuf.Timestamp {
+	if m != nil {
+		return m.ActiveAt
+	}
+	return nil
+}
+
+func (m *AlertInstance) GetValue() string {
+	if m != nil {
+		return m.Value
+	}
+	return ""
+}
+
+func (m *AlertInstance) GetPartialResponseStrategy() storepb.PartialResponseStrategy {
+	if m != nil {
+		return m.PartialResponseStrategy
+	}
+	return storepb.PartialResponseStrategy_WARN
+}
+
 type Alert struct {
 	/// state returns the maximum state of alert instances for this rule.
-	State                     AlertState        `protobuf:"varint,1,opt,name=state,proto3,enum=thanos.AlertState" json:"state"`
-	Name                      string            `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`
-	Query                     string            `protobuf:"bytes,3,opt,name=query,proto3" json:"query"`
-	DurationSeconds           float64           `protobuf:"fixed64,4,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration"`
-	Labels                    labelpb.ZLabelSet `protobuf:"bytes,5,opt,name=labels,proto3" json:"labels"`
-	Annotations               labelpb.ZLabelSet `protobuf:"bytes,6,opt,name=annotations,proto3" json:"annotations"`
-	Alerts                    []*AlertInstance  `protobuf:"bytes,7,rep,name=alerts,proto3" json:"alerts"`
-	Health                    string            `protobuf:"bytes,8,opt,name=health,proto3" json:"health"`
-	LastError                 string            `protobuf:"bytes,9,opt,name=last_error,json=lastError,proto3" json:"lastError,omitempty"`
-	EvaluationDurationSeconds float64           `protobuf:"fixed64,10,opt,name=evaluation_duration_seconds,json=evaluationDurationSeconds,proto3" json:"evaluationTime"`
-	LastEvaluation            time.Time         `protobuf:"bytes,11,opt,name=last_evaluation,json=lastEvaluation,proto3,stdtime" json:"lastEvaluation"`
+	// @gotags: json:"state"
+	State AlertState `protobuf:"varint,1,opt,name=state,proto3,enum=thanos.AlertState" json:"state"`
+	// @gotags: json:"name"
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`
+	// @gotags: json:"query"
+	Query string `protobuf:"bytes,3,opt,name=query,proto3" json:"query"`
+	// @gotags: json:"duration"
+	DurationSeconds float64 `protobuf:"fixed64,4,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration"`
+	// @gotags: json:"labels"
+	Labels *labelpb.ZLabelSet `protobuf:"bytes,5,opt,name=labels,proto3" json:"labels"`
+	// @gotags: json:"annotations"
+	Annotations *labelpb.ZLabelSet `protobuf:"bytes,6,opt,name=annotations,proto3" json:"annotations"`
+	// @gotags: json:"alerts"
+	Alerts []*AlertInstance `protobuf:"bytes,7,rep,name=alerts,proto3" json:"alerts"`
+	// @gotags: json:"health"
+	Health string `protobuf:"bytes,8,opt,name=health,proto3" json:"health"`
+	// @gotags: json:"lastError,omitempty"
+	LastError string `protobuf:"bytes,9,opt,name=last_error,json=lastError,proto3" json:"lastError,omitempty"`
+	// @gotags: json:"evaluationTime"
+	EvaluationDurationSeconds float64 `protobuf:"fixed64,10,opt,name=evaluation_duration_seconds,json=evaluationDurationSeconds,proto3" json:"evaluationTime"`
+	// @gotags: json:"lastEvaluation"
+	LastEvaluation       *protobuf.Timestamp `protobuf:"bytes,11,opt,name=last_evaluation,json=lastEvaluation,proto3" json:"lastEvaluation"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *Alert) Reset()         { *m = Alert{} }
@@ -492,14 +645,101 @@ func (m *Alert) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Alert proto.InternalMessageInfo
 
+func (m *Alert) GetState() AlertState {
+	if m != nil {
+		return m.State
+	}
+	return AlertState_INACTIVE
+}
+
+func (m *Alert) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Alert) GetQuery() string {
+	if m != nil {
+		return m.Query
+	}
+	return ""
+}
+
+func (m *Alert) GetDurationSeconds() float64 {
+	if m != nil {
+		return m.DurationSeconds
+	}
+	return 0
+}
+
+func (m *Alert) GetLabels() *labelpb.ZLabelSet {
+	if m != nil {
+		return m.Labels
+	}
+	return nil
+}
+
+func (m *Alert) GetAnnotations() *labelpb.ZLabelSet {
+	if m != nil {
+		return m.Annotations
+	}
+	return nil
+}
+
+func (m *Alert) GetAlerts() []*AlertInstance {
+	if m != nil {
+		return m.Alerts
+	}
+	return nil
+}
+
+func (m *Alert) GetHealth() string {
+	if m != nil {
+		return m.Health
+	}
+	return ""
+}
+
+func (m *Alert) GetLastError() string {
+	if m != nil {
+		return m.LastError
+	}
+	return ""
+}
+
+func (m *Alert) GetEvaluationDurationSeconds() float64 {
+	if m != nil {
+		return m.EvaluationDurationSeconds
+	}
+	return 0
+}
+
+func (m *Alert) GetLastEvaluation() *protobuf.Timestamp {
+	if m != nil {
+		return m.LastEvaluation
+	}
+	return nil
+}
+
 type RecordingRule struct {
-	Name                      string            `protobuf:"bytes,1,opt,name=name,proto3" json:"name"`
-	Query                     string            `protobuf:"bytes,2,opt,name=query,proto3" json:"query"`
-	Labels                    labelpb.ZLabelSet `protobuf:"bytes,3,opt,name=labels,proto3" json:"labels"`
-	Health                    string            `protobuf:"bytes,4,opt,name=health,proto3" json:"health"`
-	LastError                 string            `protobuf:"bytes,5,opt,name=last_error,json=lastError,proto3" json:"lastError,omitempty"`
-	EvaluationDurationSeconds float64           `protobuf:"fixed64,6,opt,name=evaluation_duration_seconds,json=evaluationDurationSeconds,proto3" json:"evaluationTime"`
-	LastEvaluation            time.Time         `protobuf:"bytes,7,opt,name=last_evaluation,json=lastEvaluation,proto3,stdtime" json:"lastEvaluation"`
+	// @gotags: json:"name"
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name"`
+	// @gotags: json:"query"
+	Query string `protobuf:"bytes,2,opt,name=query,proto3" json:"query"`
+	// @gotags: json:"labels"
+	Labels *labelpb.ZLabelSet `protobuf:"bytes,3,opt,name=labels,proto3" json:"labels"`
+	// @gotags: json:"health"
+	Health string `protobuf:"bytes,4,opt,name=health,proto3" json:"health"`
+	// @gotags: json:"lastError,omitempty"
+	LastError string `protobuf:"bytes,5,opt,name=last_error,json=lastError,proto3" json:"lastError,omitempty"`
+	// @gotags: json:"evaluationTime"
+	EvaluationDurationSeconds float64 `protobuf:"fixed64,6,opt,name=evaluation_duration_seconds,json=evaluationDurationSeconds,proto3" json:"evaluationTime"`
+	// @gotags: json:"lastEvaluation"
+	LastEvaluation       *protobuf.Timestamp `protobuf:"bytes,7,opt,name=last_evaluation,json=lastEvaluation,proto3" json:"lastEvaluation"`
+	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
+	XXX_unrecognized     []byte              `json:"-"`
+	XXX_sizecache        int32               `json:"-"`
 }
 
 func (m *RecordingRule) Reset()         { *m = RecordingRule{} }
@@ -535,6 +775,55 @@ func (m *RecordingRule) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_RecordingRule proto.InternalMessageInfo
 
+func (m *RecordingRule) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *RecordingRule) GetQuery() string {
+	if m != nil {
+		return m.Query
+	}
+	return ""
+}
+
+func (m *RecordingRule) GetLabels() *labelpb.ZLabelSet {
+	if m != nil {
+		return m.Labels
+	}
+	return nil
+}
+
+func (m *RecordingRule) GetHealth() string {
+	if m != nil {
+		return m.Health
+	}
+	return ""
+}
+
+func (m *RecordingRule) GetLastError() string {
+	if m != nil {
+		return m.LastError
+	}
+	return ""
+}
+
+func (m *RecordingRule) GetEvaluationDurationSeconds() float64 {
+	if m != nil {
+		return m.EvaluationDurationSeconds
+	}
+	return 0
+}
+
+func (m *RecordingRule) GetLastEvaluation() *protobuf.Timestamp {
+	if m != nil {
+		return m.LastEvaluation
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("thanos.AlertState", AlertState_name, AlertState_value)
 	proto.RegisterEnum("thanos.RulesRequest_Type", RulesRequest_Type_name, RulesRequest_Type_value)
@@ -551,69 +840,59 @@ func init() {
 func init() { proto.RegisterFile("rules/rulespb/rpc.proto", fileDescriptor_91b1d28f30eb5efb) }
 
 var fileDescriptor_91b1d28f30eb5efb = []byte{
-	// 981 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0xcd, 0x6e, 0xdb, 0x46,
-	0x10, 0x26, 0x2d, 0x91, 0x12, 0xc7, 0x76, 0xa2, 0x6e, 0x62, 0x98, 0x56, 0x0a, 0xd1, 0x10, 0x90,
-	0xc2, 0x2d, 0x1a, 0xa9, 0xb0, 0x91, 0x14, 0x39, 0x15, 0x92, 0xad, 0xc6, 0x02, 0x0c, 0x37, 0x58,
-	0x09, 0x3d, 0xa4, 0x07, 0x75, 0x25, 0x6f, 0x64, 0x01, 0x14, 0xc9, 0xec, 0xae, 0x5c, 0xe8, 0x01,
-	0x7a, 0xcf, 0xb9, 0x2f, 0xd2, 0x7b, 0x4f, 0xbe, 0x14, 0xc8, 0xb1, 0x27, 0xb5, 0xb5, 0x6f, 0x7a,
-	0x8a, 0x62, 0x77, 0x49, 0x51, 0x56, 0xe5, 0x3a, 0x69, 0xd5, 0x0b, 0x67, 0x77, 0xe6, 0x9b, 0xfd,
-	0x99, 0xf9, 0xf8, 0x91, 0xb0, 0xcd, 0x46, 0x3e, 0xe5, 0x55, 0xf5, 0x8c, 0xba, 0x55, 0x16, 0xf5,
-	0x2a, 0x11, 0x0b, 0x45, 0x88, 0x6c, 0x71, 0x4e, 0x82, 0x90, 0x17, 0x77, 0xb8, 0x08, 0x19, 0xad,
-	0xaa, 0x67, 0xd4, 0xad, 0x8a, 0x71, 0x44, 0xb9, 0x86, 0x24, 0x21, 0x9f, 0x74, 0xa9, 0xbf, 0x10,
-	0x7a, 0xd8, 0x0f, 0xfb, 0xa1, 0x1a, 0x56, 0xe5, 0x28, 0xf6, 0x7a, 0xfd, 0x30, 0xec, 0xfb, 0xb4,
-	0xaa, 0x66, 0xdd, 0xd1, 0xeb, 0xaa, 0x18, 0x0c, 0x29, 0x17, 0x64, 0x18, 0x69, 0x40, 0xf9, 0x17,
-	0x13, 0x36, 0xb0, 0x3c, 0x0a, 0xa6, 0x6f, 0x46, 0x94, 0x0b, 0xf4, 0x04, 0xb2, 0x72, 0x59, 0xd7,
-	0xdc, 0x35, 0xf7, 0xee, 0xed, 0xef, 0x54, 0xf4, 0xa1, 0x2a, 0xf3, 0x98, 0x4a, 0x7b, 0x1c, 0x51,
-	0xac, 0x60, 0xe8, 0x3b, 0xd8, 0x89, 0x08, 0x13, 0x03, 0xe2, 0x77, 0x18, 0xe5, 0x51, 0x18, 0x70,
-	0xda, 0xe1, 0x82, 0x11, 0x41, 0xfb, 0x63, 0x77, 0x4d, 0xad, 0xe1, 0x25, 0x6b, 0xbc, 0xd4, 0x40,
-	0x1c, 0xe3, 0x5a, 0x31, 0x0c, 0x6f, 0x47, 0xcb, 0x03, 0xe5, 0x4f, 0x20, 0x2b, 0xb7, 0x42, 0x39,
-	0xc8, 0xd4, 0x4e, 0x4e, 0x0a, 0x06, 0x72, 0xc0, 0xaa, 0x9d, 0x34, 0x70, 0xbb, 0x60, 0x22, 0x00,
-	0x1b, 0x37, 0x0e, 0xbf, 0xc1, 0x47, 0x85, 0xb5, 0xf2, 0xf7, 0xb0, 0x19, 0x9f, 0x4f, 0x2f, 0x80,
-	0x3e, 0x05, 0xab, 0xcf, 0xc2, 0x51, 0xa4, 0x6e, 0xb1, 0xbe, 0xff, 0xd1, 0xfc, 0x2d, 0x5e, 0xc8,
-	0xc0, 0xb1, 0x81, 0x35, 0x02, 0x15, 0x21, 0xf7, 0x03, 0x61, 0xc1, 0x20, 0xe8, 0xab, 0xe3, 0x3a,
-	0xc7, 0x06, 0x4e, 0x1c, 0xf5, 0x3c, 0xd8, 0x8c, 0xf2, 0x91, 0x2f, 0xca, 0x87, 0x00, 0xb3, 0x5c,
-	0x8e, 0x9e, 0x82, 0xad, 0x92, 0xb9, 0x6b, 0xee, 0x66, 0x96, 0xae, 0x5f, 0x87, 0xe9, 0xc4, 0x8b,
-	0x41, 0x38, 0xb6, 0xe5, 0x5f, 0x33, 0xe0, 0xcc, 0x10, 0xe8, 0x63, 0xc8, 0x06, 0x64, 0xa8, 0x0b,
-	0xed, 0xd4, 0xf3, 0xd3, 0x89, 0xa7, 0xe6, 0x58, 0x3d, 0x65, 0xf4, 0xf5, 0xc0, 0xa7, 0xfa, 0x4c,
-	0x3a, 0x2a, 0xe7, 0x58, 0x3d, 0xd1, 0x13, 0xb0, 0x14, 0x7f, 0xdc, 0x8c, 0xda, 0x7f, 0x63, 0x7e,
-	0xff, 0xba, 0x33, 0x9d, 0x78, 0x3a, 0x8c, 0xb5, 0x41, 0x7b, 0x90, 0x1f, 0x04, 0x82, 0xb2, 0x0b,
-	0xe2, 0xbb, 0xd9, 0x5d, 0x73, 0xcf, 0xac, 0x6f, 0x4c, 0x27, 0xde, 0xcc, 0x87, 0x67, 0x23, 0x84,
-	0xe1, 0x11, 0xbd, 0x20, 0xfe, 0x88, 0x88, 0x41, 0x18, 0x74, 0xce, 0x46, 0x4c, 0x0f, 0x38, 0xed,
-	0x85, 0xc1, 0x19, 0x77, 0x2d, 0x95, 0x8c, 0xa6, 0x13, 0xef, 0x5e, 0x0a, 0x6b, 0x0f, 0x86, 0x14,
-	0xef, 0xa4, 0xf3, 0xa3, 0x38, 0xab, 0xa5, 0x93, 0x50, 0x07, 0xee, 0xfb, 0x84, 0x8b, 0x4e, 0x8a,
-	0x70, 0x6d, 0xd5, 0x96, 0x62, 0x45, 0xb3, 0xb3, 0x92, 0xb0, 0xb3, 0xd2, 0x4e, 0xd8, 0x59, 0x2f,
-	0x5e, 0x4e, 0x3c, 0x43, 0xee, 0x23, 0x53, 0x1b, 0xb3, 0xcc, 0xb7, 0xbf, 0x7b, 0x26, 0x5e, 0xf0,
-	0xa1, 0x0b, 0xd8, 0xbe, 0x85, 0x5a, 0x6e, 0xfe, 0xbd, 0x18, 0x58, 0x7f, 0x34, 0x9d, 0x78, 0xb7,
-	0xb1, 0x10, 0xdf, 0xb6, 0x78, 0x39, 0x80, 0xac, 0x2c, 0x38, 0x7a, 0x0a, 0x0e, 0xa3, 0xbd, 0x90,
-	0x9d, 0x49, 0x12, 0x69, 0xc6, 0x6d, 0xcd, 0x3a, 0x92, 0x04, 0x24, 0xf2, 0xd8, 0xc0, 0x29, 0x12,
-	0x3d, 0x06, 0x8b, 0xf8, 0x94, 0x09, 0xd5, 0xe3, 0xf5, 0xfd, 0xcd, 0x24, 0xa5, 0x26, 0x9d, 0x92,
-	0xa0, 0x2a, 0x3a, 0x47, 0xc2, 0x9f, 0x33, 0xb0, 0xa9, 0x82, 0xcd, 0x80, 0x0b, 0x12, 0xf4, 0x28,
-	0x7a, 0x0e, 0xb6, 0xd2, 0x02, 0xbe, 0x48, 0xf4, 0x57, 0x27, 0xd2, 0xdd, 0xa2, 0xa2, 0x7e, 0x2f,
-	0x2e, 0x64, 0x0c, 0xc4, 0xb1, 0x45, 0xc7, 0xb0, 0x4e, 0x82, 0x20, 0x14, 0xaa, 0x84, 0x3c, 0x3e,
-	0xc3, 0x92, 0xfc, 0x07, 0x71, 0xfe, 0x3c, 0x1a, 0xcf, 0x4f, 0xd0, 0x01, 0x58, 0x5c, 0x10, 0x41,
-	0xdd, 0x8c, 0x2a, 0x36, 0xba, 0x71, 0x8f, 0x96, 0x8c, 0x68, 0x4a, 0x2a, 0x10, 0xd6, 0x06, 0xb5,
-	0xc0, 0x21, 0x3d, 0x31, 0xb8, 0xa0, 0x1d, 0x22, 0x14, 0x27, 0xef, 0xa0, 0xc3, 0x74, 0xe2, 0x21,
-	0x9d, 0x50, 0x13, 0x9f, 0x87, 0xc3, 0x81, 0xa0, 0xc3, 0x48, 0x8c, 0x15, 0x1d, 0xf2, 0x89, 0x1f,
-	0x79, 0x60, 0x49, 0x56, 0x50, 0xc5, 0x53, 0x47, 0xef, 0xaa, 0x1c, 0x58, 0x9b, 0x7f, 0x62, 0x8a,
-	0xfd, 0x7f, 0x32, 0xe5, 0x47, 0x0b, 0x2c, 0x55, 0x8e, 0xb4, 0x58, 0xe6, 0x07, 0x14, 0x2b, 0x91,
-	0x8a, 0xb5, 0xa5, 0x52, 0xe1, 0x81, 0xf5, 0x66, 0x44, 0xd9, 0x58, 0xd5, 0x3f, 0xbe, 0xb5, 0x72,
-	0x60, 0x6d, 0xd0, 0x97, 0x50, 0xf8, 0xdb, 0x9b, 0x3c, 0x27, 0x03, 0x49, 0x0c, 0xdf, 0x3f, 0x5b,
-	0x78, 0x73, 0x53, 0x7a, 0x59, 0xff, 0x91, 0x5e, 0xf6, 0xbf, 0xa7, 0xd7, 0x73, 0xb0, 0xd5, 0x8b,
-	0xc0, 0xdd, 0x9c, 0x12, 0xbb, 0xad, 0x1b, 0x25, 0x4b, 0x5e, 0x05, 0x2d, 0xb8, 0x1a, 0x88, 0x63,
-	0x8b, 0xca, 0x60, 0x9f, 0x53, 0xe2, 0x8b, 0x73, 0xa5, 0x03, 0x8e, 0xc6, 0x68, 0x0f, 0x8e, 0x2d,
-	0x7a, 0x06, 0xa0, 0xd5, 0x89, 0xb1, 0x90, 0xb9, 0x8e, 0xc2, 0x6d, 0x4f, 0x27, 0xde, 0x03, 0x25,
-	0x32, 0xd2, 0x99, 0xd2, 0x0d, 0x3b, 0x33, 0xe7, 0x5d, 0x4a, 0x09, 0x2b, 0x52, 0xca, 0xf5, 0x55,
-	0x2a, 0x65, 0xf9, 0xa7, 0x0c, 0x6c, 0xde, 0x50, 0xa4, 0x3b, 0xbe, 0x42, 0x33, 0x6a, 0xad, 0xdd,
-	0x42, 0xad, 0x94, 0x21, 0x99, 0x0f, 0x65, 0x48, 0xda, 0x9c, 0xec, 0x7b, 0x36, 0xc7, 0x5a, 0x55,
-	0x73, 0xec, 0x15, 0x35, 0x27, 0xb7, 0xca, 0xe6, 0x7c, 0x76, 0x00, 0x90, 0xaa, 0x00, 0xda, 0x80,
-	0x7c, 0xf3, 0xb4, 0x76, 0xd8, 0x6e, 0x7e, 0xdb, 0x28, 0x18, 0x68, 0x1d, 0x72, 0x2f, 0x1b, 0xa7,
-	0x47, 0xcd, 0xd3, 0x17, 0xfa, 0xd7, 0xe7, 0xeb, 0x26, 0x96, 0xe3, 0xb5, 0xfd, 0xaf, 0xc0, 0x52,
-	0xbf, 0x3e, 0xe8, 0x59, 0x32, 0x78, 0xb8, 0xec, 0x97, 0xad, 0xb8, 0xb5, 0xe0, 0xd5, 0x02, 0xf5,
-	0x85, 0x59, 0x7f, 0x7c, 0xf9, 0x67, 0xc9, 0xb8, 0xbc, 0x2a, 0x99, 0xef, 0xae, 0x4a, 0xe6, 0x1f,
-	0x57, 0x25, 0xf3, 0xed, 0x75, 0xc9, 0x78, 0x77, 0x5d, 0x32, 0x7e, 0xbb, 0x2e, 0x19, 0xaf, 0x72,
-	0xf1, 0x6f, 0x6a, 0xd7, 0x56, 0x97, 0x3b, 0xf8, 0x2b, 0x00, 0x00, 0xff, 0xff, 0x02, 0xf0, 0xe5,
-	0x62, 0xbe, 0x0a, 0x00, 0x00,
+	// 825 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x56, 0xdd, 0x6e, 0x22, 0x37,
+	0x14, 0x66, 0x06, 0x66, 0x60, 0x0e, 0x61, 0x97, 0x5a, 0xa1, 0x19, 0xa8, 0x9a, 0x8d, 0x46, 0x6a,
+	0x95, 0x54, 0x5a, 0xa8, 0x88, 0xda, 0xbd, 0x6b, 0xc5, 0x26, 0x74, 0x83, 0x84, 0xd2, 0xc8, 0xa0,
+	0x4a, 0x4d, 0x2f, 0xa8, 0x01, 0x87, 0x20, 0x4d, 0x66, 0x26, 0xb6, 0x27, 0x15, 0x6f, 0xd3, 0x67,
+	0x69, 0x6f, 0x7a, 0xd9, 0xaa, 0x2f, 0x50, 0xe5, 0x49, 0x2a, 0xdb, 0x33, 0xfc, 0x95, 0xfc, 0x90,
+	0xde, 0x8c, 0xec, 0x73, 0x3e, 0x1f, 0xdb, 0xe7, 0xfb, 0x3e, 0x0c, 0xec, 0xb1, 0xd8, 0xa7, 0xbc,
+	0xa1, 0xbe, 0xd1, 0xb0, 0xc1, 0xa2, 0x51, 0x3d, 0x62, 0xa1, 0x08, 0x91, 0x2d, 0xae, 0x49, 0x10,
+	0xf2, 0x5a, 0x95, 0x8b, 0x90, 0xd1, 0x86, 0xfa, 0x46, 0xc3, 0x86, 0x98, 0x45, 0x94, 0x6b, 0x48,
+	0x9a, 0xf2, 0xc9, 0x90, 0xfa, 0x6b, 0xa9, 0x37, 0x93, 0x30, 0x9c, 0xf8, 0xb4, 0xa1, 0x66, 0xc3,
+	0xf8, 0xaa, 0x21, 0xa6, 0x37, 0x94, 0x0b, 0x72, 0x13, 0x69, 0x80, 0xf7, 0x9b, 0x01, 0x3b, 0x58,
+	0x6e, 0x8a, 0xe9, 0x6d, 0x4c, 0xb9, 0x40, 0x6f, 0x21, 0x27, 0x0b, 0xb8, 0xc6, 0x81, 0x71, 0xf8,
+	0xaa, 0x59, 0xad, 0xeb, 0xed, 0xeb, 0xcb, 0x98, 0x7a, 0x7f, 0x16, 0x51, 0xac, 0x60, 0xe8, 0x27,
+	0xa8, 0x46, 0x84, 0x89, 0x29, 0xf1, 0x07, 0x8c, 0xf2, 0x28, 0x0c, 0x38, 0x1d, 0x70, 0xc1, 0x88,
+	0xa0, 0x93, 0x99, 0x6b, 0xaa, 0x1a, 0x6f, 0xd2, 0x1a, 0x17, 0x1a, 0x88, 0x13, 0x5c, 0x2f, 0x81,
+	0xe1, 0xbd, 0x68, 0x73, 0xc2, 0xfb, 0x1c, 0x72, 0x72, 0x2b, 0x94, 0x87, 0x6c, 0xab, 0xdb, 0x2d,
+	0x67, 0x90, 0x03, 0x56, 0xab, 0xdb, 0xc6, 0xfd, 0xb2, 0x81, 0x00, 0x6c, 0xdc, 0x3e, 0xf9, 0x1e,
+	0x9f, 0x96, 0x4d, 0xef, 0x67, 0x28, 0x25, 0xe7, 0xd3, 0x05, 0xd0, 0x11, 0x58, 0x13, 0x16, 0xc6,
+	0x91, 0xba, 0x45, 0xb1, 0xf9, 0xd1, 0xf2, 0x2d, 0x3e, 0xc8, 0xc4, 0x59, 0x06, 0x6b, 0x04, 0xaa,
+	0x41, 0xfe, 0x17, 0xc2, 0x82, 0x69, 0x30, 0x51, 0xc7, 0x75, 0xce, 0x32, 0x38, 0x0d, 0xbc, 0x2f,
+	0x80, 0xcd, 0x28, 0x8f, 0x7d, 0xe1, 0xbd, 0x03, 0x98, 0xaf, 0xe5, 0xe8, 0x08, 0x6c, 0xb5, 0x98,
+	0xbb, 0xc6, 0x41, 0x76, 0x63, 0x7d, 0x9c, 0x00, 0xbc, 0xbf, 0x4d, 0x70, 0xe6, 0x51, 0x84, 0x20,
+	0x17, 0x90, 0x1b, 0xdd, 0x5c, 0x07, 0xab, 0xb1, 0x8c, 0x5d, 0x4d, 0x7d, 0xaa, 0x77, 0xc7, 0x6a,
+	0x8c, 0x3c, 0xb0, 0x94, 0x12, 0xdc, 0xac, 0xaa, 0xbf, 0xb3, 0x5c, 0x1f, 0xeb, 0x14, 0xaa, 0x41,
+	0x61, 0x1a, 0x08, 0xca, 0xee, 0x88, 0xef, 0xe6, 0x0e, 0x8c, 0x43, 0x03, 0xcf, 0xe7, 0xe8, 0x1b,
+	0xf8, 0x84, 0xde, 0x11, 0x3f, 0x26, 0x62, 0x1a, 0x06, 0x83, 0x71, 0xcc, 0xf4, 0x80, 0xd3, 0x51,
+	0x18, 0x8c, 0xb9, 0x6b, 0x29, 0x78, 0x75, 0x01, 0x39, 0x4d, 0x10, 0x3d, 0x0d, 0x40, 0x27, 0xf0,
+	0xda, 0x27, 0x5c, 0x0c, 0x16, 0x08, 0xd7, 0x56, 0x9d, 0xac, 0xd5, 0xb5, 0xa0, 0xea, 0xa9, 0xa0,
+	0xea, 0xfd, 0x54, 0x50, 0xf8, 0x95, 0x5c, 0xd2, 0x9e, 0xaf, 0x40, 0x3f, 0xc2, 0xde, 0x03, 0x8c,
+	0xbb, 0x85, 0x67, 0x0a, 0xe3, 0x81, 0x84, 0x17, 0x40, 0x4e, 0xb6, 0x02, 0x7d, 0x05, 0x0e, 0xa3,
+	0xa3, 0x90, 0x8d, 0x25, 0x7d, 0x9a, 0xeb, 0xca, 0xbc, 0x57, 0x69, 0x42, 0x22, 0xcf, 0x32, 0x78,
+	0x81, 0x44, 0x9f, 0x81, 0x45, 0x7c, 0xca, 0x84, 0xea, 0x79, 0xb1, 0x59, 0x4a, 0x97, 0xb4, 0x64,
+	0x50, 0x4a, 0x43, 0x65, 0x97, 0xe8, 0xff, 0xdd, 0x84, 0x92, 0x4a, 0x76, 0x02, 0x2e, 0x48, 0x30,
+	0x92, 0x0a, 0xb3, 0x95, 0xdf, 0xf8, 0xba, 0xc4, 0x2e, 0xbb, 0x32, 0xdc, 0xa3, 0x02, 0x27, 0x00,
+	0x74, 0x0c, 0x45, 0x12, 0x04, 0xa1, 0x50, 0x5d, 0xe1, 0xc9, 0x9e, 0x1b, 0xf0, 0xcb, 0x28, 0x74,
+	0x08, 0x16, 0x17, 0x44, 0x50, 0x37, 0xab, 0x5a, 0x85, 0x56, 0x8e, 0xd8, 0x93, 0x19, 0xac, 0x01,
+	0xe8, 0x1d, 0x38, 0x64, 0x24, 0xa6, 0x77, 0x74, 0x40, 0x84, 0x12, 0xc2, 0xe3, 0x2c, 0x15, 0x34,
+	0xb8, 0x25, 0xd0, 0x2e, 0x58, 0x92, 0x2c, 0xaa, 0xe4, 0xe0, 0x60, 0x3d, 0x79, 0x8c, 0x35, 0xfb,
+	0x7f, 0xb2, 0xf6, 0x57, 0x16, 0x2c, 0x75, 0xfe, 0xc5, 0xed, 0x8c, 0xa7, 0x6e, 0x97, 0x3a, 0xc6,
+	0x5c, 0x72, 0xcc, 0x2e, 0x58, 0xb7, 0x31, 0x65, 0x33, 0xd5, 0x1b, 0x07, 0xeb, 0x09, 0x3a, 0x82,
+	0xf2, 0x7f, 0x84, 0xae, 0x7d, 0xf1, 0x7a, 0xbc, 0x26, 0xef, 0x05, 0x79, 0xd6, 0x96, 0xe4, 0xd9,
+	0xcf, 0x22, 0xef, 0x2d, 0xd8, 0x4a, 0x41, 0xdc, 0xcd, 0x2b, 0xff, 0x56, 0x56, 0xee, 0x97, 0x6a,
+	0x08, 0x27, 0x20, 0xf4, 0x31, 0xd8, 0xd7, 0x94, 0xf8, 0xe2, 0x5a, 0xf9, 0xc2, 0xc1, 0xc9, 0x0c,
+	0x7d, 0x0a, 0xa0, 0x5d, 0xc8, 0x58, 0xc8, 0x5c, 0x47, 0xe5, 0x1c, 0x65, 0x32, 0x19, 0x78, 0xca,
+	0xe4, 0xf0, 0x02, 0x93, 0x17, 0xb7, 0x35, 0xb9, 0xf7, 0xab, 0x09, 0xa5, 0x15, 0xa7, 0x6d, 0xfc,
+	0x8d, 0x9b, 0x33, 0x66, 0xae, 0x32, 0x96, 0xd2, 0x90, 0x7d, 0x8a, 0x86, 0x45, 0x8b, 0x72, 0x8f,
+	0xb4, 0xc8, 0xda, 0xb2, 0x45, 0xf6, 0x0b, 0x5a, 0x94, 0xdf, 0xb6, 0x45, 0x5f, 0x1c, 0x03, 0x2c,
+	0x74, 0x8d, 0x76, 0xa0, 0xd0, 0x39, 0x6f, 0x9d, 0xf4, 0x3b, 0x3f, 0xb4, 0xcb, 0x19, 0x54, 0x84,
+	0xfc, 0x45, 0xfb, 0xfc, 0xb4, 0x73, 0xfe, 0x41, 0x3f, 0x69, 0xdf, 0x75, 0xb0, 0x1c, 0x9b, 0xcd,
+	0x6f, 0xc1, 0x52, 0x4f, 0x1a, 0xfa, 0x3a, 0x1d, 0xec, 0x6e, 0x7a, 0x8a, 0x6b, 0x95, 0xb5, 0xa8,
+	0xb6, 0xdc, 0x97, 0xc6, 0xfb, 0xca, 0x1f, 0xf7, 0xfb, 0xc6, 0x9f, 0xf7, 0xfb, 0xc6, 0x3f, 0xf7,
+	0xfb, 0xc6, 0x65, 0x3e, 0xf9, 0x63, 0x31, 0xb4, 0xd5, 0x81, 0x8f, 0xff, 0x0d, 0x00, 0x00, 0xff,
+	0xff, 0x24, 0xb6, 0x70, 0xd4, 0x70, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -747,6 +1026,10 @@ func (m *RulesRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if m.PartialResponseStrategy != 0 {
 		i = encodeVarintRpc(dAtA, i, uint64(m.PartialResponseStrategy))
 		i--
@@ -780,6 +1063,10 @@ func (m *RulesResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if m.Result != nil {
 		{
 			size := m.Result.Size()
@@ -847,6 +1134,10 @@ func (m *RuleGroups) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if len(m.Groups) > 0 {
 		for iNdEx := len(m.Groups) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -884,19 +1175,27 @@ func (m *RuleGroup) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if m.PartialResponseStrategy != 0 {
 		i = encodeVarintRpc(dAtA, i, uint64(m.PartialResponseStrategy))
 		i--
 		dAtA[i] = 0x40
 	}
-	n2, err2 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.LastEvaluation, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.LastEvaluation):])
-	if err2 != nil {
-		return 0, err2
+	if m.LastEvaluation != nil {
+		{
+			size, err := m.LastEvaluation.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x32
 	}
-	i -= n2
-	i = encodeVarintRpc(dAtA, i, uint64(n2))
-	i--
-	dAtA[i] = 0x32
 	if m.EvaluationDurationSeconds != 0 {
 		i -= 8
 		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.EvaluationDurationSeconds))))
@@ -960,6 +1259,10 @@ func (m *Rule) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if m.Result != nil {
 		{
 			size := m.Result.Size()
@@ -1034,6 +1337,10 @@ func (m *AlertInstance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if m.PartialResponseStrategy != 0 {
 		i = encodeVarintRpc(dAtA, i, uint64(m.PartialResponseStrategy))
 		i--
@@ -1047,12 +1354,14 @@ func (m *AlertInstance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x2a
 	}
 	if m.ActiveAt != nil {
-		n5, err5 := github_com_gogo_protobuf_types.StdTimeMarshalTo(*m.ActiveAt, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(*m.ActiveAt):])
-		if err5 != nil {
-			return 0, err5
+		{
+			size, err := m.ActiveAt.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
 		}
-		i -= n5
-		i = encodeVarintRpc(dAtA, i, uint64(n5))
 		i--
 		dAtA[i] = 0x22
 	}
@@ -1061,26 +1370,30 @@ func (m *AlertInstance) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x18
 	}
-	{
-		size, err := m.Annotations.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.Annotations != nil {
+		{
+			size, err := m.Annotations.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintRpc(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0x12
 	}
-	i--
-	dAtA[i] = 0x12
-	{
-		size, err := m.Labels.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.Labels != nil {
+		{
+			size, err := m.Labels.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintRpc(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0xa
 	}
-	i--
-	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -1104,14 +1417,22 @@ func (m *Alert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	n8, err8 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.LastEvaluation, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.LastEvaluation):])
-	if err8 != nil {
-		return 0, err8
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	i -= n8
-	i = encodeVarintRpc(dAtA, i, uint64(n8))
-	i--
-	dAtA[i] = 0x5a
+	if m.LastEvaluation != nil {
+		{
+			size, err := m.LastEvaluation.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x5a
+	}
 	if m.EvaluationDurationSeconds != 0 {
 		i -= 8
 		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.EvaluationDurationSeconds))))
@@ -1146,26 +1467,30 @@ func (m *Alert) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x3a
 		}
 	}
-	{
-		size, err := m.Annotations.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.Annotations != nil {
+		{
+			size, err := m.Annotations.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintRpc(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0x32
 	}
-	i--
-	dAtA[i] = 0x32
-	{
-		size, err := m.Labels.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.Labels != nil {
+		{
+			size, err := m.Labels.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintRpc(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0x2a
 	}
-	i--
-	dAtA[i] = 0x2a
 	if m.DurationSeconds != 0 {
 		i -= 8
 		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.DurationSeconds))))
@@ -1214,14 +1539,22 @@ func (m *RecordingRule) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	n11, err11 := github_com_gogo_protobuf_types.StdTimeMarshalTo(m.LastEvaluation, dAtA[i-github_com_gogo_protobuf_types.SizeOfStdTime(m.LastEvaluation):])
-	if err11 != nil {
-		return 0, err11
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	i -= n11
-	i = encodeVarintRpc(dAtA, i, uint64(n11))
-	i--
-	dAtA[i] = 0x3a
+	if m.LastEvaluation != nil {
+		{
+			size, err := m.LastEvaluation.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
 	if m.EvaluationDurationSeconds != 0 {
 		i -= 8
 		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.EvaluationDurationSeconds))))
@@ -1242,16 +1575,18 @@ func (m *RecordingRule) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x22
 	}
-	{
-		size, err := m.Labels.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
+	if m.Labels != nil {
+		{
+			size, err := m.Labels.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintRpc(dAtA, i, uint64(size))
 		}
-		i -= size
-		i = encodeVarintRpc(dAtA, i, uint64(size))
+		i--
+		dAtA[i] = 0x1a
 	}
-	i--
-	dAtA[i] = 0x1a
 	if len(m.Query) > 0 {
 		i -= len(m.Query)
 		copy(dAtA[i:], m.Query)
@@ -1292,6 +1627,9 @@ func (m *RulesRequest) Size() (n int) {
 	if m.PartialResponseStrategy != 0 {
 		n += 1 + sovRpc(uint64(m.PartialResponseStrategy))
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1303,6 +1641,9 @@ func (m *RulesResponse) Size() (n int) {
 	_ = l
 	if m.Result != nil {
 		n += m.Result.Size()
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1341,6 +1682,9 @@ func (m *RuleGroups) Size() (n int) {
 			n += 1 + l + sovRpc(uint64(l))
 		}
 	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1370,10 +1714,15 @@ func (m *RuleGroup) Size() (n int) {
 	if m.EvaluationDurationSeconds != 0 {
 		n += 9
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.LastEvaluation)
-	n += 1 + l + sovRpc(uint64(l))
+	if m.LastEvaluation != nil {
+		l = m.LastEvaluation.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
 	if m.PartialResponseStrategy != 0 {
 		n += 1 + sovRpc(uint64(m.PartialResponseStrategy))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1386,6 +1735,9 @@ func (m *Rule) Size() (n int) {
 	_ = l
 	if m.Result != nil {
 		n += m.Result.Size()
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1420,15 +1772,19 @@ func (m *AlertInstance) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = m.Labels.Size()
-	n += 1 + l + sovRpc(uint64(l))
-	l = m.Annotations.Size()
-	n += 1 + l + sovRpc(uint64(l))
+	if m.Labels != nil {
+		l = m.Labels.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
+	if m.Annotations != nil {
+		l = m.Annotations.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
 	if m.State != 0 {
 		n += 1 + sovRpc(uint64(m.State))
 	}
 	if m.ActiveAt != nil {
-		l = github_com_gogo_protobuf_types.SizeOfStdTime(*m.ActiveAt)
+		l = m.ActiveAt.Size()
 		n += 1 + l + sovRpc(uint64(l))
 	}
 	l = len(m.Value)
@@ -1437,6 +1793,9 @@ func (m *AlertInstance) Size() (n int) {
 	}
 	if m.PartialResponseStrategy != 0 {
 		n += 1 + sovRpc(uint64(m.PartialResponseStrategy))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
 	}
 	return n
 }
@@ -1461,10 +1820,14 @@ func (m *Alert) Size() (n int) {
 	if m.DurationSeconds != 0 {
 		n += 9
 	}
-	l = m.Labels.Size()
-	n += 1 + l + sovRpc(uint64(l))
-	l = m.Annotations.Size()
-	n += 1 + l + sovRpc(uint64(l))
+	if m.Labels != nil {
+		l = m.Labels.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
+	if m.Annotations != nil {
+		l = m.Annotations.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
 	if len(m.Alerts) > 0 {
 		for _, e := range m.Alerts {
 			l = e.Size()
@@ -1482,8 +1845,13 @@ func (m *Alert) Size() (n int) {
 	if m.EvaluationDurationSeconds != 0 {
 		n += 9
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.LastEvaluation)
-	n += 1 + l + sovRpc(uint64(l))
+	if m.LastEvaluation != nil {
+		l = m.LastEvaluation.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1501,8 +1869,10 @@ func (m *RecordingRule) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRpc(uint64(l))
 	}
-	l = m.Labels.Size()
-	n += 1 + l + sovRpc(uint64(l))
+	if m.Labels != nil {
+		l = m.Labels.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
 	l = len(m.Health)
 	if l > 0 {
 		n += 1 + l + sovRpc(uint64(l))
@@ -1514,8 +1884,13 @@ func (m *RecordingRule) Size() (n int) {
 	if m.EvaluationDurationSeconds != 0 {
 		n += 9
 	}
-	l = github_com_gogo_protobuf_types.SizeOfStdTime(m.LastEvaluation)
-	n += 1 + l + sovRpc(uint64(l))
+	if m.LastEvaluation != nil {
+		l = m.LastEvaluation.Size()
+		n += 1 + l + sovRpc(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
 	return n
 }
 
@@ -1604,6 +1979,7 @@ func (m *RulesRequest) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1721,6 +2097,7 @@ func (m *RulesResponse) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1805,6 +2182,7 @@ func (m *RuleGroups) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -1992,7 +2370,10 @@ func (m *RuleGroup) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.LastEvaluation, dAtA[iNdEx:postIndex]); err != nil {
+			if m.LastEvaluation == nil {
+				m.LastEvaluation = &protobuf.Timestamp{}
+			}
+			if err := m.LastEvaluation.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2027,6 +2408,7 @@ func (m *RuleGroup) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2147,6 +2529,7 @@ func (m *Rule) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2214,6 +2597,9 @@ func (m *AlertInstance) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			if m.Labels == nil {
+				m.Labels = &labelpb.ZLabelSet{}
+			}
 			if err := m.Labels.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -2246,6 +2632,9 @@ func (m *AlertInstance) Unmarshal(dAtA []byte) error {
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
+			}
+			if m.Annotations == nil {
+				m.Annotations = &labelpb.ZLabelSet{}
 			}
 			if err := m.Annotations.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2300,9 +2689,9 @@ func (m *AlertInstance) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.ActiveAt == nil {
-				m.ActiveAt = new(time.Time)
+				m.ActiveAt = &protobuf.Timestamp{}
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(m.ActiveAt, dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.ActiveAt.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2369,6 +2758,7 @@ func (m *AlertInstance) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2530,6 +2920,9 @@ func (m *Alert) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			if m.Labels == nil {
+				m.Labels = &labelpb.ZLabelSet{}
+			}
 			if err := m.Labels.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -2562,6 +2955,9 @@ func (m *Alert) Unmarshal(dAtA []byte) error {
 			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
+			}
+			if m.Annotations == nil {
+				m.Annotations = &labelpb.ZLabelSet{}
 			}
 			if err := m.Annotations.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2705,7 +3101,10 @@ func (m *Alert) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.LastEvaluation, dAtA[iNdEx:postIndex]); err != nil {
+			if m.LastEvaluation == nil {
+				m.LastEvaluation = &protobuf.Timestamp{}
+			}
+			if err := m.LastEvaluation.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2721,6 +3120,7 @@ func (m *Alert) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}
@@ -2852,6 +3252,9 @@ func (m *RecordingRule) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
+			if m.Labels == nil {
+				m.Labels = &labelpb.ZLabelSet{}
+			}
 			if err := m.Labels.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -2960,7 +3363,10 @@ func (m *RecordingRule) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if err := github_com_gogo_protobuf_types.StdTimeUnmarshal(&m.LastEvaluation, dAtA[iNdEx:postIndex]); err != nil {
+			if m.LastEvaluation == nil {
+				m.LastEvaluation = &protobuf.Timestamp{}
+			}
+			if err := m.LastEvaluation.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2976,6 +3382,7 @@ func (m *RecordingRule) Unmarshal(dAtA []byte) error {
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
 	}

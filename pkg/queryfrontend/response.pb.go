@@ -102,6 +102,7 @@ func (m *ThanosLabelsResponse) GetError() string {
 }
 
 
+
 type ThanosSeriesResponse struct {
 	// @gotags: json:"status"
 	Status string `protobuf:"bytes,1,opt,name=Status,proto3" json:"status"`
@@ -178,7 +179,6 @@ func (m *ThanosSeriesResponse) GetError() string {
 	}
 	return ""
 }
-
 
 type ResponseHeader struct {
 	// @gotags: json:"-"

@@ -43,12 +43,17 @@ message ExemplarsResponse {
 }
 
 message ExemplarData {
+    // @gotags: json:"seriesLabels"
     ZLabelSet seriesLabels = 1;
+    // @gotags: json:"exemplars"
     repeated Exemplar exemplars = 2;
 }
 
 message Exemplar {
+    // @gotags: json:"labels"
     ZLabelSet labels = 1;
+    // @gotags: json:"value"
     double value = 2;
+    // @gotags: json:"timestamp"
     int64 ts = 3;
 }

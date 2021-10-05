@@ -91,9 +91,9 @@ func (r *Rule) SetLabels(ls labels.Labels) {
 
 	switch {
 	case r.GetRecording() != nil:
-		r.GetRecording().Labels = result
+		r.GetRecording().Labels = &result
 	case r.GetAlert() != nil:
-		r.GetAlert().Labels = result
+		r.GetAlert().Labels = &result
 	}
 }
 

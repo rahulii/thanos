@@ -29,6 +29,7 @@ import (
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/store/storepb"
 	"github.com/thanos-io/thanos/pkg/tracing"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const tmpRuleDir = ".tmp-rules"
@@ -64,8 +65,8 @@ func (g Group) toProto() *rulespb.RuleGroup {
 					Name:                      rule.Name(),
 					Query:                     rule.Query().String(),
 					DurationSeconds:           rule.HoldDuration().Seconds(),
-					Labels:                    labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(rule.Labels())},
-					Annotations:               labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(rule.Annotations())},
+					Labels:                    &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(rule.Labels())},
+					Annotations:               &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(rule.Annotations())},
 					Alerts:                    ActiveAlertsToProto(g.PartialResponseStrategy, rule),
 					Health:                    string(rule.Health()),
 					LastError:                 lastError,
@@ -78,7 +79,7 @@ func (g Group) toProto() *rulespb.RuleGroup {
 				Result: &rulespb.Rule_Recording{Recording: &rulespb.RecordingRule{
 					Name:                      rule.Name(),
 					Query:                     rule.Query().String(),
-					Labels:                    labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(rule.Labels())},
+					Labels:                    &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(rule.Labels())},
 					Health:                    string(rule.Health()),
 					LastError:                 lastError,
 					EvaluationDurationSeconds: rule.GetEvaluationDuration().Seconds(),
@@ -99,8 +100,8 @@ func ActiveAlertsToProto(s storepb.PartialResponseStrategy, a *rules.AlertingRul
 	for i, ruleAlert := range active {
 		ret[i] = &rulespb.AlertInstance{
 			PartialResponseStrategy: s,
-			Labels:                  labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ruleAlert.Labels)},
-			Annotations:             labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ruleAlert.Annotations)},
+			Labels:                  &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ruleAlert.Labels)},
+			Annotations:             &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ruleAlert.Annotations)},
 			State:                   rulespb.AlertState(ruleAlert.State),
 			ActiveAt:                &ruleAlert.ActiveAt, //nolint:exportloopref
 			Value:                   strconv.FormatFloat(ruleAlert.Value, 'e', -1, 64),
