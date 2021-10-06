@@ -7,12 +7,12 @@ import (
 	context "context"
 	encoding_binary "encoding/binary"
 	fmt "fmt"
-	protobuf "google/protobuf"
 	io "io"
 	math "math"
 	math_bits "math/bits"
 
 	proto "github.com/gogo/protobuf/proto"
+	protobuf "github.com/gogo/protobuf/types"
 	labelpb "github.com/thanos-io/thanos/pkg/store/labelpb"
 	storepb "github.com/thanos-io/thanos/pkg/store/storepb"
 	grpc "google.golang.org/grpc"
