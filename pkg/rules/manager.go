@@ -29,7 +29,7 @@ import (
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/store/storepb"
 	"github.com/thanos-io/thanos/pkg/tracing"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"github.com/gogo/protobuf/types"
 )
 
 const tmpRuleDir = ".tmp-rules"
@@ -41,13 +41,15 @@ type Group struct {
 }
 
 func (g Group) toProto() *rulespb.RuleGroup {
+	lastEvaluation,_ := types.TimestampProto(g.GetLastEvaluation())
+	
 	ret := &rulespb.RuleGroup{
 		Name:                    g.Name(),
 		File:                    g.OriginalFile,
 		Interval:                g.Interval().Seconds(),
 		PartialResponseStrategy: g.PartialResponseStrategy,
 		// UTC needed due to https://github.com/gogo/protobuf/issues/519.
-		LastEvaluation:            g.GetLastEvaluation().UTC(),
+		LastEvaluation:          lastEvaluation,
 		EvaluationDurationSeconds: g.GetEvaluationTime().Seconds(),
 	}
 
