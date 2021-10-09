@@ -79,11 +79,11 @@ func (t1 *ActiveTarget) CompareState(t2 *ActiveTarget) int {
 		return d
 	}
 
-	if t1.LastScrape.Before(t2.LastScrape) {
+	if t1.LastScrape.Compare(t2.LastScrape) < 0 {
 		return 1
 	}
 
-	if t1.LastScrape.After(t2.LastScrape) {
+	if t1.LastScrape.Compare(t2.LastScrape) > 0 {
 		return -1
 	}
 

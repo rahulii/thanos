@@ -17,7 +17,7 @@ var _ UnaryClient = &GRPCClient{}
 // UnaryClient is a gRPC metadatapb.Metadata client which expands streaming metadata API. Useful for consumers that does not
 // support streaming.
 type UnaryClient interface {
-	MetricMetadata(ctx context.Context, req *metadatapb.MetricMetadataRequest) (map[string][]metadatapb.Meta, storage.Warnings, error)
+	MetricMetadata(ctx context.Context, req *metadatapb.MetricMetadataRequest) (map[string][]*metadatapb.Meta, storage.Warnings, error)
 }
 
 // GRPCClient allows to retrieve metadata from local gRPC streaming server implementation.

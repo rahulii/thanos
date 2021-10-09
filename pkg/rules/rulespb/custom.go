@@ -8,8 +8,7 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
-	"time"
-
+	"github.com/gogo/protobuf/types"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
@@ -54,11 +53,11 @@ func NewRecordingRule(r *RecordingRule) *Rule {
 //
 // Note: This method assumes r1 and r2 are logically equal as per Rule#Compare.
 func (r1 *RecordingRule) Compare(r2 *RecordingRule) int {
-	if r1.LastEvaluation.Before(r2.LastEvaluation) {
+	if r1.LastEvaluation.Compare(r2.LastEvaluation) < 0 {
 		return 1
 	}
 
-	if r1.LastEvaluation.After(r2.LastEvaluation) {
+	if r1.LastEvaluation.Compare(r2.LastEvaluation) > 0 {
 		return -1
 	}
 
@@ -119,14 +118,14 @@ func (r *Rule) GetQuery() string {
 	}
 }
 
-func (r *Rule) GetLastEvaluation() time.Time {
+func (r *Rule) GetLastEvaluation() *types.Timestamp {
 	switch {
 	case r.GetRecording() != nil:
 		return r.GetRecording().LastEvaluation
 	case r.GetAlert() != nil:
 		return r.GetAlert().LastEvaluation
 	default:
-		return time.Time{}
+		return &types.Timestamp{}
 	}
 }
 
@@ -318,11 +317,11 @@ func (a1 *Alert) Compare(a2 *Alert) int {
 		return d
 	}
 
-	if a1.LastEvaluation.Before(a2.LastEvaluation) {
+	if a1.LastEvaluation.Compare(a2.LastEvaluation) < 0 {
 		return 1
 	}
 
-	if a1.LastEvaluation.After(a2.LastEvaluation) {
+	if a1.LastEvaluation.Compare(a2.LastEvaluation) > 0 {
 		return -1
 	}
 
