@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
+	protobuf "github.com/gogo/protobuf/types"
 )
 
 const (
@@ -36,6 +37,12 @@ func NewWarningRulesResponse(warning error) *RulesResponse {
 }
 
 func NewRecordingRule(r *RecordingRule) *Rule {
+	if r.Labels == nil{
+		r.Labels = &labelpb.ZLabelSet{}
+	}
+	if r.LastEvaluation == nil {
+		r.LastEvaluation = &protobuf.Timestamp{}
+	}
 	return &Rule{
 		Result: &Rule_Recording{Recording: r},
 	}
@@ -65,6 +72,15 @@ func (r1 *RecordingRule) Compare(r2 *RecordingRule) int {
 }
 
 func NewAlertingRule(a *Alert) *Rule {
+	if a.Annotations == nil {
+		a.Annotations = &labelpb.ZLabelSet{}
+	}
+	if a.Labels == nil{
+		a.Labels = &labelpb.ZLabelSet{}
+	}
+	if a.LastEvaluation == nil {
+		a.LastEvaluation = &protobuf.Timestamp{}
+	}
 	return &Rule{
 		Result: &Rule_Alert{Alert: a},
 	}
@@ -204,6 +220,7 @@ func (r *RuleGroup) Key() string {
 }
 
 func (m *Rule) UnmarshalJSON(entry []byte) error {
+
 	decider := struct {
 		Type string `json:"type"`
 	}{}
@@ -218,13 +235,28 @@ func (m *Rule) UnmarshalJSON(entry []byte) error {
 			return errors.Wrapf(err, "rule: recording rule unmarshal: %v", string(entry))
 		}
 
+		if r.Labels == nil{
+			r.Labels = &labelpb.ZLabelSet{}
+		}
+		if r.LastEvaluation == nil {
+			r.LastEvaluation = &protobuf.Timestamp{}
+		}
+
 		m.Result = &Rule_Recording{Recording: r}
 	case "alerting":
 		r := &Alert{}
 		if err := json.Unmarshal(entry, r); err != nil {
 			return errors.Wrapf(err, "rule: alerting rule unmarshal: %v", string(entry))
 		}
-
+		if r.Annotations == nil {
+			r.Annotations = &labelpb.ZLabelSet{}
+		}
+		if r.Labels == nil{
+			r.Labels = &labelpb.ZLabelSet{}
+		}
+		if r.LastEvaluation == nil {
+			r.LastEvaluation = &protobuf.Timestamp{}
+		}
 		m.Result = &Rule_Alert{Alert: r}
 	case "":
 		return errors.Errorf("rule: no type field provided: %v", string(entry))
