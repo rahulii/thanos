@@ -5,10 +5,10 @@ package testpromcompatibility
 
 import (
 	"encoding/json"
-	"time"
-
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/prometheus/prometheus/rules"
+	protobuf "github.com/gogo/protobuf/types"
+
 )
 
 type RuleDiscovery struct {
@@ -23,7 +23,7 @@ type RuleGroup struct {
 	Rules          []Rule    `json:"rules"`
 	Interval       float64   `json:"interval"`
 	EvaluationTime float64   `json:"evaluationTime"`
-	LastEvaluation time.Time `json:"lastEvaluation"`
+	LastEvaluation *protobuf.Timestamp `json:"lastEvaluation"`
 
 	PartialResponseStrategy string `json:"partialResponseStrategy"`
 }
@@ -48,7 +48,7 @@ type Alert struct {
 	Labels      labels.Labels `json:"labels"`
 	Annotations labels.Labels `json:"annotations"`
 	State       string        `json:"state"`
-	ActiveAt    *time.Time    `json:"activeAt,omitempty"`
+	ActiveAt    *protobuf.Timestamp    `json:"activeAt,omitempty"`
 	Value       string        `json:"value"`
 
 	PartialResponseStrategy string `json:"partialResponseStrategy"`
@@ -66,7 +66,7 @@ type AlertingRule struct {
 	Health         rules.RuleHealth `json:"health"`
 	LastError      string           `json:"lastError,omitempty"`
 	EvaluationTime float64          `json:"evaluationTime"`
-	LastEvaluation time.Time        `json:"lastEvaluation"`
+	LastEvaluation *protobuf.Timestamp        `json:"lastEvaluation"`
 	// Type of an AlertingRule is always "alerting".
 	Type string `json:"type"`
 }
@@ -78,7 +78,7 @@ type RecordingRule struct {
 	Health         rules.RuleHealth `json:"health"`
 	LastError      string           `json:"lastError,omitempty"`
 	EvaluationTime float64          `json:"evaluationTime"`
-	LastEvaluation time.Time        `json:"lastEvaluation"`
+	LastEvaluation *protobuf.Timestamp        `json:"lastEvaluation"`
 	// Type of a prometheusRecordingRule is always "recording".
 	Type string `json:"type"`
 }

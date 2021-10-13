@@ -15,6 +15,7 @@ import (
 	"github.com/thanos-io/thanos/pkg/store/storepb"
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/testpromcompatibility"
+	"github.com/gogo/protobuf/types"
 )
 
 func TestJSONUnmarshalMarshal(t *testing.T) {
@@ -203,13 +204,13 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 							NewAlertingRule(&Alert{
 								Name:  "alert1",
 								Query: "up == 0",
-								Labels: labelpb.ZLabelSet{
+								Labels: &labelpb.ZLabelSet{
 									Labels: []*labelpb.Label{
 										{Name: "a2", Value: "b2"},
 										{Name: "c2", Value: "d2"},
 									},
 								},
-								Annotations: labelpb.ZLabelSet{
+								Annotations: &labelpb.ZLabelSet{
 									Labels: []*labelpb.Label{
 										{Name: "ann1", Value: "ann44"},
 										{Name: "ann2", Value: "ann33"},
@@ -319,7 +320,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 							NewRecordingRule(&RecordingRule{
 								Query: "up",
 								Name:  "recording1",
-								Labels: labelpb.ZLabelSet{
+								Labels: &labelpb.ZLabelSet{
 									Labels: []*labelpb.Label{
 										{Name: "a", Value: "b"},
 										{Name: "c", Value: "d"},
@@ -333,13 +334,13 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 							NewAlertingRule(&Alert{
 								Name:  "alert1",
 								Query: "up == 0",
-								Labels: labelpb.ZLabelSet{
+								Labels: &labelpb.ZLabelSet{
 									Labels: []*labelpb.Label{
 										{Name: "a2", Value: "b2"},
 										{Name: "c2", Value: "d2"},
 									},
 								},
-								Annotations: labelpb.ZLabelSet{
+								Annotations: &labelpb.ZLabelSet{
 									Labels: []*labelpb.Label{
 										{Name: "ann1", Value: "ann44"},
 										{Name: "ann2", Value: "ann33"},
@@ -347,12 +348,12 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								},
 								Alerts: []*AlertInstance{
 									{
-										Labels: labelpb.ZLabelSet{
+										Labels: &labelpb.ZLabelSet{
 											Labels: []*labelpb.Label{
 												{Name: "instance1", Value: "1"},
 											},
 										},
-										Annotations: labelpb.ZLabelSet{
+										Annotations: &labelpb.ZLabelSet{
 											Labels: []*labelpb.Label{
 												{Name: "annotation1", Value: "2"},
 											},
@@ -457,7 +458,7 @@ func TestRulesComparator(t *testing.T) {
 			r1:   NewAlertingRule(&Alert{Name: "a"}),
 			r2: NewAlertingRule(&Alert{
 				Name: "a",
-				Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 				}}}),
 			want: -1,
@@ -466,12 +467,12 @@ func TestRulesComparator(t *testing.T) {
 			name: "label ordering",
 			r1: NewAlertingRule(&Alert{
 				Name: "a",
-				Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 				}}}),
 			r2: NewAlertingRule(&Alert{
 				Name: "a",
-				Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "2"},
 				}}}),
 			want: -1,
@@ -480,12 +481,12 @@ func TestRulesComparator(t *testing.T) {
 			name: "multiple label ordering",
 			r1: NewAlertingRule(&Alert{
 				Name: "a",
-				Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 				}}}),
 			r2: NewAlertingRule(&Alert{
 				Name: "a",
-				Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 					{Name: "b", Value: "1"},
 				}}}),
@@ -496,13 +497,13 @@ func TestRulesComparator(t *testing.T) {
 			r1: NewAlertingRule(&Alert{
 				Name:            "a",
 				DurationSeconds: 0.0,
-				Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 				}}}),
 			r2: NewAlertingRule(&Alert{
 				Name:            "a",
 				DurationSeconds: 1.0,
-				Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 				}}}),
 			want: -1,

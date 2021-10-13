@@ -59,8 +59,18 @@ import (
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/e2eutil"
 	"github.com/thanos-io/thanos/pkg/testutil/testpromcompatibility"
-)
+	protobuf "github.com/gogo/protobuf/types"
 
+)
+func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
+	timestamp,_ := protobuf.TimestampProto(t)
+	return timestamp
+}
+
+func timestampToTime(t *protobuf.Timestamp) time.Time{
+	time,_ := protobuf.TimestampFromProto(t)
+	return time
+}
 func TestMain(m *testing.M) {
 	testutil.TolerantVerifyLeakMain(m)
 }
@@ -1445,47 +1455,47 @@ func TestParseStoreDebugMatchersParam(t *testing.T) {
 }
 
 func TestRulesHandler(t *testing.T) {
-	twoHAgo := time.Now().Add(-2 * time.Hour)
+	twoHAgo := timeToProtoTimestamp(time.Now().Add(-2 * time.Hour))
 	all := []*rulespb.Rule{
 		rulespb.NewRecordingRule(&rulespb.RecordingRule{
 			Name:                      "1",
-			LastEvaluation:            time.Time{}.Add(1 * time.Minute),
+			LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(1 * time.Minute)),
 			EvaluationDurationSeconds: 12,
 			Health:                    "x",
 			Query:                     "sum(up)",
-			Labels:                    labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label"}}},
+			Labels:                    &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label"}}},
 			LastError:                 "err1",
 		}),
 		rulespb.NewRecordingRule(&rulespb.RecordingRule{
 			Name:                      "2",
-			LastEvaluation:            time.Time{}.Add(2 * time.Minute),
+			LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(2 * time.Minute)),
 			EvaluationDurationSeconds: 12,
 			Health:                    "x",
 			Query:                     "sum(up1)",
-			Labels:                    labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label2"}}},
+			Labels:                    &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label2"}}},
 		}),
 		rulespb.NewAlertingRule(&rulespb.Alert{
 			Name:                      "3",
-			LastEvaluation:            time.Time{}.Add(3 * time.Minute),
+			LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(3 * time.Minute)),
 			EvaluationDurationSeconds: 12,
 			Health:                    "x",
 			Query:                     "sum(up2) == 2",
 			DurationSeconds:           101,
-			Labels:                    labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label3"}}},
-			Annotations:               labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "ann", Value: "a1"}}},
+			Labels:                    &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label3"}}},
+			Annotations:               &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "ann", Value: "a1"}}},
 			Alerts: []*rulespb.AlertInstance{
 				{
-					Labels:      labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "1"}}},
-					Annotations: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "2"}}},
+					Labels:      &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "1"}}},
+					Annotations: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "2"}}},
 					State:       rulespb.AlertState_FIRING,
-					ActiveAt:    &twoHAgo,
+					ActiveAt:    twoHAgo,
 					Value:       "1",
 					// This is unlikely if groups is warn, but test nevertheless.
 					PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 				},
 				{
-					Labels:      labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "3"}}},
-					Annotations: labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "4"}}},
+					Labels:      &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "3"}}},
+					Annotations: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "4"}}},
 					State:       rulespb.AlertState_PENDING,
 					ActiveAt:    nil,
 					Value:       "2",
@@ -1497,12 +1507,12 @@ func TestRulesHandler(t *testing.T) {
 		}),
 		rulespb.NewAlertingRule(&rulespb.Alert{
 			Name:                      "4",
-			LastEvaluation:            time.Time{}.Add(4 * time.Minute),
+			LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(4 * time.Minute)),
 			EvaluationDurationSeconds: 122,
 			Health:                    "x",
 			DurationSeconds:           102,
 			Query:                     "sum(up3) == 3",
-			Labels:                    labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label4"}}},
+			Labels:                    &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "some", Value: "label4"}}},
 			State:                     rulespb.AlertState_INACTIVE,
 		}),
 	}
@@ -1516,7 +1526,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all,
 					Interval:                  1,
 					EvaluationDurationSeconds: 214,
-					LastEvaluation:            time.Time{}.Add(10 * time.Minute),
+					LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(10 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_WARN,
 				},
 				{
@@ -1525,7 +1535,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all[3:],
 					Interval:                  10,
 					EvaluationDurationSeconds: 2142,
-					LastEvaluation:            time.Time{}.Add(100 * time.Minute),
+					LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(100 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_ABORT,
 				},
 			},
@@ -1536,7 +1546,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all[:2],
 					Interval:                  1,
 					EvaluationDurationSeconds: 214,
-					LastEvaluation:            time.Time{}.Add(20 * time.Minute),
+					LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(20 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_WARN,
 				},
 			},
@@ -1547,7 +1557,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all[2:],
 					Interval:                  1,
 					EvaluationDurationSeconds: 214,
-					LastEvaluation:            time.Time{}.Add(30 * time.Minute),
+					LastEvaluation:            timeToProtoTimestamp(time.Time{}.Add(30 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_WARN,
 				},
 			},
@@ -1636,7 +1646,7 @@ func TestRulesHandler(t *testing.T) {
 						Rules:                   expectedAll,
 						Interval:                1,
 						EvaluationTime:          214,
-						LastEvaluation:          time.Time{}.Add(10 * time.Minute),
+						LastEvaluation:          timeToProtoTimestamp(time.Time{}.Add(10 * time.Minute)),
 						PartialResponseStrategy: "WARN",
 					},
 					{
@@ -1645,7 +1655,7 @@ func TestRulesHandler(t *testing.T) {
 						Rules:                   expectedAll[3:],
 						Interval:                10,
 						EvaluationTime:          2142,
-						LastEvaluation:          time.Time{}.Add(100 * time.Minute),
+						LastEvaluation:          timeToProtoTimestamp(time.Time{}.Add(100 * time.Minute)),
 						PartialResponseStrategy: "ABORT",
 					},
 				},
@@ -1661,7 +1671,7 @@ func TestRulesHandler(t *testing.T) {
 						Rules:                   expectedAll[:2],
 						Interval:                1,
 						EvaluationTime:          214,
-						LastEvaluation:          time.Time{}.Add(20 * time.Minute),
+						LastEvaluation:          timeToProtoTimestamp(time.Time{}.Add(20 * time.Minute)),
 						PartialResponseStrategy: "WARN",
 					},
 				},
@@ -1677,7 +1687,7 @@ func TestRulesHandler(t *testing.T) {
 						Rules:                   expectedAll[2:],
 						Interval:                1,
 						EvaluationTime:          214,
-						LastEvaluation:          time.Time{}.Add(30 * time.Minute),
+						LastEvaluation:          timeToProtoTimestamp(time.Time{}.Add(30 * time.Minute)),
 						PartialResponseStrategy: "WARN",
 					},
 				},

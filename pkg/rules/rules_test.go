@@ -13,6 +13,8 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/prometheus/prometheus/storage"
 
+	"github.com/gogo/protobuf/types"
+	protobuf "github.com/gogo/protobuf/types"
 	"github.com/thanos-io/thanos/pkg/rules/rulespb"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/store/storepb"
@@ -21,6 +23,11 @@ import (
 
 func TestMain(m *testing.M) {
 	testutil.TolerantVerifyLeakMain(m)
+}
+
+func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
+	timestamp,_ := types.TimestampProto(t)
+	return timestamp
 }
 
 // testRulesAgainstExamples tests against alerts.yaml and rules.yaml examples.
@@ -200,7 +207,7 @@ func testRulesAgainstExamples(t *testing.T, dir string, server rulespb.RulesServ
 				}
 				// Mask nondeterministic fields.
 				got[i].EvaluationDurationSeconds = 0
-				got[i].LastEvaluation = time.Time{}
+				got[i].LastEvaluation,_ = types.TimestampProto(time.Time{})
 
 				t.Run(got[i].Name+" "+path.Base(got[i].File), func(t *testing.T) {
 					testutil.Equals(t, expectedForType[i], got[i])
@@ -274,34 +281,34 @@ func TestDedupRules(t *testing.T) {
 			rules: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
 			want: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
@@ -312,30 +319,30 @@ func TestDedupRules(t *testing.T) {
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
@@ -343,17 +350,17 @@ func TestDedupRules(t *testing.T) {
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
-					Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
@@ -364,39 +371,39 @@ func TestDedupRules(t *testing.T) {
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 1.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 1.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 2.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
@@ -405,22 +412,22 @@ func TestDedupRules(t *testing.T) {
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 1.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 2.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
-					Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
-					Name: "a1", Query: "up", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Name: "a1", Query: "up", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
@@ -432,7 +439,7 @@ func TestDedupRules(t *testing.T) {
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 1.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 						{Name: "replica", Value: "1"},
 					}}}),
@@ -440,7 +447,7 @@ func TestDedupRules(t *testing.T) {
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 2.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
@@ -449,14 +456,14 @@ func TestDedupRules(t *testing.T) {
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 1.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:            "a1",
 					Query:           "up",
 					DurationSeconds: 2.0,
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "a", Value: "1"},
 					}}}),
 			},
@@ -465,21 +472,21 @@ func TestDedupRules(t *testing.T) {
 		{
 			name: "replica labels",
 			rules: []*rulespb.Rule{
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 					{Name: "replica", Value: "3"},
 				}}}),
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 					{Name: "replica", Value: "1"},
 				}}}),
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 					{Name: "replica", Value: "2"},
 				}}}),
 			},
 			want: []*rulespb.Rule{
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 				}}}),
 			},
@@ -488,28 +495,28 @@ func TestDedupRules(t *testing.T) {
 		{
 			name: "ambiguous replica labels",
 			rules: []*rulespb.Rule{
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "replica", Value: "1"},
 					{Name: "a", Value: "1"},
 				}}}),
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "replica", Value: "1"},
 				}}}),
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "replica", Value: "1"},
 					{Name: "a", Value: "2"},
 				}}}),
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "replica", Value: "1"},
 					{Name: "a", Value: "1"},
 				}}}),
 			},
 			want: []*rulespb.Rule{
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1"}),
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "1"},
 				}}}),
-				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+				rulespb.NewRecordingRule(&rulespb.RecordingRule{Name: "a1", Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 					{Name: "a", Value: "2"},
 				}}}),
 			},
@@ -521,38 +528,38 @@ func TestDedupRules(t *testing.T) {
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "2"},
 					}},
-					LastEvaluation: time.Unix(0, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(0, 0)),
 				}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "1"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:  "a1",
 					Query: "up",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "3"},
 					}},
-					LastEvaluation: time.Unix(3, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(3, 0)),
 				}),
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:           "a1",
 					Query:          "up",
-					LastEvaluation: time.Unix(2, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(2, 0)),
 				}),
 			},
 			want: []*rulespb.Rule{
 				rulespb.NewRecordingRule(&rulespb.RecordingRule{
 					Name:           "a1",
 					Query:          "up",
-					LastEvaluation: time.Unix(3, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(3, 0)),
 				}),
 			},
 			replicaLabels: []string{"replica"},
@@ -562,74 +569,74 @@ func TestDedupRules(t *testing.T) {
 			rules: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "2"},
 					}},
-					LastEvaluation: time.Unix(4, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(4, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "2"},
 						{Name: "foo", Value: "bar"},
 					}},
-					LastEvaluation: time.Unix(2, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(2, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:           "a2",
-					LastEvaluation: time.Unix(2, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(2, 0)),
 					State:          rulespb.AlertState_PENDING,
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "1"},
 					}},
-					LastEvaluation: time.Unix(3, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(3, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a2",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "1"},
 					}},
-					LastEvaluation: time.Unix(3, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(3, 0)),
 					State:          rulespb.AlertState_PENDING,
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "3"},
 					}},
-					LastEvaluation: time.Unix(2, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(2, 0)),
 					State:          rulespb.AlertState_FIRING,
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "foo", Value: "bar"},
 					}},
 					State:          rulespb.AlertState_FIRING,
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 			},
 			want: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					State:          rulespb.AlertState_FIRING,
 					Name:           "a1",
-					LastEvaluation: time.Unix(2, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(2, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					State: rulespb.AlertState_FIRING,
 					Name:  "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "foo", Value: "bar"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					State:          rulespb.AlertState_PENDING,
 					Name:           "a2",
-					LastEvaluation: time.Unix(3, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(3, 0)),
 				}),
 			},
 			replicaLabels: []string{"replica"},
@@ -639,51 +646,51 @@ func TestDedupRules(t *testing.T) {
 			rules: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "1"},
 						{Name: "severity", Value: "warning"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "1"},
 						{Name: "severity", Value: "critical"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "2"},
 						{Name: "severity", Value: "warning"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "2"},
 						{Name: "severity", Value: "critical"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 			},
 			want: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "severity", Value: "critical"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "severity", Value: "warning"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 			},
 			replicaLabels: []string{"replica"},
@@ -693,35 +700,35 @@ func TestDedupRules(t *testing.T) {
 			rules: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "1"},
 						{Name: "label", Value: "foo"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "replica", Value: "2"},
 						{Name: "label", Value: "foo"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "label", Value: "foo"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 			},
 			want: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name: "a1",
-					Labels: labelpb.ZLabelSet{Labels: []*labelpb.Label{
+					Labels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 						{Name: "label", Value: "foo"},
 					}},
-					LastEvaluation: time.Unix(1, 0),
+					LastEvaluation: timeToProtoTimestamp(time.Unix(1, 0)),
 				}),
 			},
 			replicaLabels: []string{"replica"},
