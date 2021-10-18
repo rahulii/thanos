@@ -9,22 +9,17 @@ import (
 	"testing"
 	"time"
 
+	protobuf "github.com/gogo/protobuf/types"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/store/storepb"
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/testpromcompatibility"
-	protobuf "github.com/gogo/protobuf/types"
 )
 func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
 	timestamp,_ := protobuf.TimestampProto(t)
 	return timestamp
-}
-
-func timestampToTime(t *protobuf.Timestamp) time.Time{
-	time,_ := protobuf.TimestampFromProto(t)
-	return time
 }
 
 func TestJSONUnmarshalMarshal(t *testing.T) {
@@ -411,10 +406,10 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 	} {
 		t.Run(tcase.name, func(t *testing.T) {
 			jsonInput, err := json.Marshal(tcase.input)
+			fmt.Println(tcase.name," ",string(jsonInput))
 			testutil.Ok(t, err)
-
-			proto := &RuleGroups{}
-			err = json.Unmarshal(jsonInput, proto)
+			proto := RuleGroups{}
+			err = json.Unmarshal(jsonInput, &proto)
 			if tcase.expectedErr != nil {
 				testutil.NotOk(t, err)
 				testutil.Equals(t, tcase.expectedErr.Error(), err.Error())

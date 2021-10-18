@@ -5,16 +5,24 @@ package testpromcompatibility
 
 import (
 	"encoding/json"
+	"time"
+
+	protobuf "github.com/gogo/protobuf/types"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/prometheus/prometheus/rules"
-	protobuf "github.com/gogo/protobuf/types"
-
 )
+
+
+func timestampToTime(t *protobuf.Timestamp) *time.Time{
+    time,_ := protobuf.TimestampFromProto(t)
+    return &time
+}
 
 type RuleDiscovery struct {
 	RuleGroups []*RuleGroup `json:"groups"`
 }
 
+type lastEvaluation *protobuf.Timestamp
 // Same as https://github.com/prometheus/prometheus/blob/c530b4b456cc5f9ec249f771dff187eb7715dc9b/web/api/v1/api.go#L955
 // but with Partial Response.
 type RuleGroup struct {
@@ -23,7 +31,19 @@ type RuleGroup struct {
 	Rules          []Rule    `json:"rules"`
 	Interval       float64   `json:"interval"`
 	EvaluationTime float64   `json:"evaluationTime"`
-	LastEvaluation *protobuf.Timestamp `json:"lastEvaluation"`
+	LastEvaluation lastEvaluation `json:"lastEvaluation"`
+
+	PartialResponseStrategy string `json:"partialResponseStrategy"`
+}
+
+//RuleGroupCopy is used in custom MarshalJSON to marshal protobuf.Timestamp into pretty timestamp
+type RuleGroupCopy struct {
+	Name           string    `json:"name"`
+	File           string    `json:"file"`
+	Rules          []Rule    `json:"rules"`
+	Interval       float64   `json:"interval"`
+	EvaluationTime float64   `json:"evaluationTime"`
+	LastEvaluation *time.Time `json:"lastEvaluation"`
 
 	PartialResponseStrategy string `json:"partialResponseStrategy"`
 }
@@ -34,8 +54,18 @@ func (r *RuleGroup) MarshalJSON() ([]byte, error) {
 	if r.Rules == nil {
 		r.Rules = make([]Rule, 0)
 	}
-	type plain RuleGroup
-	return json.Marshal((*plain)(r))
+
+	r1 := &RuleGroupCopy{
+		Name: r.Name,
+		File: r.File,
+		Rules: r.Rules,
+		Interval: r.Interval,
+		EvaluationTime: r.EvaluationTime,
+		LastEvaluation: timestampToTime(r.LastEvaluation),
+		PartialResponseStrategy: r.PartialResponseStrategy,
+	}
+	type plain RuleGroupCopy
+	return json.Marshal((*plain)(r1))
 }
 
 type Rule interface{}

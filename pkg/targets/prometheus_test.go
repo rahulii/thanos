@@ -22,7 +22,15 @@ import (
 	"github.com/thanos-io/thanos/pkg/targets/targetspb"
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/e2eutil"
+	protobuf "github.com/gogo/protobuf/types"
+
 )
+
+
+func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
+	timestamp,_ := protobuf.TimestampProto(t)
+	return timestamp
+}
 
 func TestPrometheus_Targets_e2e(t *testing.T) {
 	p, err := e2eutil.NewPrometheus()
@@ -95,7 +103,7 @@ scrape_configs:
 				ScrapeUrl:          fmt.Sprintf("http://%s/metrics", p.Addr()),
 				GlobalUrl:          "",
 				Health:             targetspb.TargetHealth_UP,
-				LastScrape:         time.Time{},
+				LastScrape:         timeToProtoTimestamp(time.Time{}),
 				LastScrapeDuration: 0,
 			},
 		},
@@ -150,7 +158,7 @@ scrape_configs:
 
 			for i := range targets.ActiveTargets {
 				targets.ActiveTargets[i].LastScrapeDuration = 0
-				targets.ActiveTargets[i].LastScrape = time.Time{}
+				targets.ActiveTargets[i].LastScrape = timeToProtoTimestamp(time.Time{})
 				targets.ActiveTargets[i].LastError = ""
 				targets.ActiveTargets[i].GlobalUrl = ""
 			}

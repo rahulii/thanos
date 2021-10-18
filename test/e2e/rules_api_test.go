@@ -25,7 +25,14 @@ import (
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/test/e2e/e2ethanos"
+	protobuf "github.com/gogo/protobuf/types"
 )
+
+
+func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
+	timestamp,_ := protobuf.TimestampProto(t)
+	return timestamp
+}
 
 func TestRulesAPI_Fanout(t *testing.T) {
 	t.Parallel()
@@ -169,7 +176,7 @@ func ruleAndAssert(t *testing.T, ctx context.Context, addr, typ string, want []*
 		}
 
 		for ig, g := range res {
-			res[ig].LastEvaluation = time.Time{}
+			res[ig].LastEvaluation = timeToProtoTimestamp(time.Time{})
 			res[ig].EvaluationDurationSeconds = 0
 			res[ig].Interval = 0
 			res[ig].PartialResponseStrategy = 0

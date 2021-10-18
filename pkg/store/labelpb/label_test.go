@@ -44,12 +44,12 @@ func TestLabelsToPromLabels_LabelsToPromLabels(t *testing.T) {
 
 func TestLabelMarshal_Unmarshal(t *testing.T) {
 	l := ProtobufLabelsFromPromLabels(labels.FromStrings("aaaaaaa", "bbbbb"))[0]
-	b, err := (&l).Marshal()
+	b, err := (l).Marshal()
 	testutil.Ok(t, err)
 
-	l2 := &ZLabel{}
+	l2 := &Label{}
 	testutil.Ok(t, l2.Unmarshal(b))
-	testutil.Equals(t, labels.FromStrings("aaaaaaa", "bbbbb"), ProtobufLabelsToPromLabels([]ZLabel{*l2}))
+	testutil.Equals(t, labels.FromStrings("aaaaaaa", "bbbbb"), ProtobufLabelsToPromLabels([]*Label{l2}))
 }
 
 func TestExtendLabels(t *testing.T) {
@@ -159,9 +159,9 @@ func BenchmarkZLabelsMarshalUnmarshal(b *testing.B) {
 
 	b.Run("ZLabel", func(b *testing.B) {
 		b.ReportAllocs()
-		lbls := ZLabelSet{Labels: make([]ZLabel, 0, num)}
+		lbls := LabelSet{Labels: make([]*Label, 0, num)}
 		for i := 0; i < num; i++ {
-			lbls.Labels = append(lbls.Labels, ZLabel{Name: fmt.Sprintf(fmtLbl, i), Value: fmt.Sprintf(fmtLbl, i)})
+			lbls.Labels = append(lbls.Labels, &Label{Name: fmt.Sprintf(fmtLbl, i), Value: fmt.Sprintf(fmtLbl, i)})
 		}
 		b.ResetTimer()
 
