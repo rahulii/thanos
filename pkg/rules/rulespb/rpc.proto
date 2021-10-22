@@ -21,7 +21,18 @@ option go_package = "rulespb";
 // option (gogoproto.goproto_unkeyed_all) = false;
 // option (gogoproto.goproto_unrecognized_all) = false;
 // option (gogoproto.goproto_sizecache_all) = false;
+message Timestamp {
+    // Represents seconds of UTC time since Unix epoch
+    // 1970-01-01T00:00:00Z. Must be from 0001-01-01T00:00:00Z to
+    // 9999-12-31T23:59:59Z inclusive.
+    int64 seconds = 1;
 
+    // Non-negative fractions of a second at nanosecond resolution. Negative
+    // second values with fractions must still have non-negative nanos values
+    // that count forward in time. Must be from 0 to 999,999,999
+    // inclusive.
+    int32 nanos = 2;
+}
 /// Rules represents API that is responsible for gathering rules and their statuses.
 service Rules {
     /// Rules has info for all rules.
@@ -77,8 +88,8 @@ message RuleGroup {
     double interval                           = 4;
     // @gotags: json:"evaluationTime"
     double evaluation_duration_seconds        = 5; // TODO: Is it really second?
-    // @gotags: json:"lastEvaluation"
-    google.protobuf.Timestamp last_evaluation = 6;
+    // @gotags: json:"lastEvaluation,omitempty"
+    Timestamp last_evaluation = 6;
 
     // Thanos specific.
     // @gotags: json:"partialResponseStrategy"
@@ -116,7 +127,7 @@ message AlertInstance {
     // @gotags: json:"state"
     AlertState state                     = 3;
     // @gotags: json:"activeAt,omitempty"
-    google.protobuf.Timestamp active_at  = 4;
+    Timestamp active_at  = 4;
     // @gotags: json:"value"
     string value                         = 5;
     // Thanos specific. Used mainly for alert API purposes.
@@ -146,8 +157,8 @@ message Alert {
     string last_error                         = 9;
     // @gotags: json:"evaluationTime"
     double evaluation_duration_seconds        = 10;
-    // @gotags: json:"lastEvaluation"
-    google.protobuf.Timestamp last_evaluation = 11;
+    // @gotags: json:"lastEvaluation,omitempty"
+    Timestamp last_evaluation = 11;
 }
 
 message RecordingRule {
@@ -163,6 +174,6 @@ message RecordingRule {
     string last_error                         = 5;
     // @gotags: json:"evaluationTime"
     double evaluation_duration_seconds        = 6;
-    // @gotags: json:"lastEvaluation"
-    google.protobuf.Timestamp last_evaluation = 7;
+    // @gotags: json:"lastEvaluation,omitempty"
+    Timestamp last_evaluation = 7;
 }

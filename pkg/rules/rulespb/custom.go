@@ -13,12 +13,69 @@ import (
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	protobuf "github.com/gogo/protobuf/types"
+	"time"
 )
 
 const (
 	RuleRecordingType = "recording"
 	RuleAlertingType  = "alerting"
 )
+
+func timestampToTime(t *protobuf.Timestamp) time.Time {
+	if t == nil {
+		return time.Time{}
+	}
+	empty := &protobuf.Timestamp{}
+	if t.Equal(empty) {
+		return time.Time{}
+	}
+	time, _ := protobuf.TimestampFromProto(t)
+	return time
+}
+
+func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
+	timestamp,_ := types.TimestampProto(t)
+	return timestamp
+}
+
+func (m *Timestamp) MarshalJSON() ([]byte, error) {
+	ts := &protobuf.Timestamp{Seconds: m.Seconds, Nanos: m.Nanos}
+	ret := timestampToTime(ts)
+	return json.Marshal(ret)
+}
+
+func (m *Timestamp) UnmarshalJSON(data []byte) error{
+	ret := time.Time{}
+	err:= json.Unmarshal(data,&ret)
+	if err != nil {
+		return err
+	}
+
+	if ret.IsZero() {
+		return nil
+	}
+	protoTimestamp := timeToProtoTimestamp(ret)
+
+	m.Seconds = protoTimestamp.Seconds
+	m.Nanos = protoTimestamp.Nanos
+
+	return nil
+}
+
+func (r *RuleGroups) UnmarshalJSON(data []byte) error {
+	type plain RuleGroups
+	ret := &plain{}
+	err := json.Unmarshal(data, &ret)
+	if err != nil {
+		return err
+	}
+	if ret.Groups == nil {
+		ret.Groups = []*RuleGroup{}
+	}
+
+	*r = RuleGroups(*ret)
+	return nil
+}
 
 func NewRuleGroupRulesResponse(rg *RuleGroup) *RulesResponse {
 	return &RulesResponse{
@@ -41,7 +98,7 @@ func NewRecordingRule(r *RecordingRule) *Rule {
 		r.Labels = &labelpb.ZLabelSet{}
 	}
 	if r.LastEvaluation == nil {
-		r.LastEvaluation = &protobuf.Timestamp{}
+		r.LastEvaluation = &Timestamp{}
 	}
 	return &Rule{
 		Result: &Rule_Recording{Recording: r},
@@ -60,11 +117,11 @@ func NewRecordingRule(r *RecordingRule) *Rule {
 //
 // Note: This method assumes r1 and r2 are logically equal as per Rule#Compare.
 func (r1 *RecordingRule) Compare(r2 *RecordingRule) int {
-	if r1.LastEvaluation.Compare(r2.LastEvaluation) < 0 {
+	if r1.LastEvaluation.Seconds < r2.LastEvaluation.Seconds {
 		return 1
 	}
 
-	if r1.LastEvaluation.Compare(r2.LastEvaluation) > 0 {
+	if r1.LastEvaluation.Seconds > r2.LastEvaluation.Seconds {
 		return -1
 	}
 
@@ -79,7 +136,7 @@ func NewAlertingRule(a *Alert) *Rule {
 		a.Labels = &labelpb.ZLabelSet{}
 	}
 	if a.LastEvaluation == nil {
-		a.LastEvaluation = &protobuf.Timestamp{}
+		a.LastEvaluation = &Timestamp{}
 	}
 	return &Rule{
 		Result: &Rule_Alert{Alert: a},
@@ -134,14 +191,14 @@ func (r *Rule) GetQuery() string {
 	}
 }
 
-func (r *Rule) GetLastEvaluation() *types.Timestamp {
+func (r *Rule) GetLastEvaluation() *Timestamp {
 	switch {
 	case r.GetRecording() != nil:
 		return r.GetRecording().LastEvaluation
 	case r.GetAlert() != nil:
 		return r.GetAlert().LastEvaluation
 	default:
-		return &types.Timestamp{}
+		return &Timestamp{}
 	}
 }
 
@@ -239,7 +296,7 @@ func (m *Rule) UnmarshalJSON(entry []byte) error {
 			r.Labels = &labelpb.ZLabelSet{}
 		}
 		if r.LastEvaluation == nil {
-			r.LastEvaluation = &protobuf.Timestamp{}
+			r.LastEvaluation = &Timestamp{}
 		}
 
 		m.Result = &Rule_Recording{Recording: r}
@@ -255,7 +312,7 @@ func (m *Rule) UnmarshalJSON(entry []byte) error {
 			r.Labels = &labelpb.ZLabelSet{}
 		}
 		if r.LastEvaluation == nil {
-			r.LastEvaluation = &protobuf.Timestamp{}
+			r.LastEvaluation = &Timestamp{}
 		}
 		m.Result = &Rule_Alert{Alert: r}
 	case "":
@@ -349,11 +406,11 @@ func (a1 *Alert) Compare(a2 *Alert) int {
 		return d
 	}
 
-	if a1.LastEvaluation.Compare(a2.LastEvaluation) < 0 {
+	if a1.LastEvaluation.Seconds <  a2.LastEvaluation.Seconds {
 		return 1
 	}
 
-	if a1.LastEvaluation.Compare(a2.LastEvaluation) > 0 {
+	if a1.LastEvaluation.Seconds >  a2.LastEvaluation.Seconds{
 		return -1
 	}
 

@@ -101,7 +101,12 @@ func (m *ThanosLabelsResponse) GetError() string {
 	return ""
 }
 
-
+func (m *ThanosLabelsResponse) GetHeaders() []*ResponseHeader {
+	if m != nil {
+		return m.Headers
+	}
+	return nil
+}
 
 type ThanosSeriesResponse struct {
 	// @gotags: json:"status"
@@ -178,6 +183,13 @@ func (m *ThanosSeriesResponse) GetError() string {
 		return m.Error
 	}
 	return ""
+}
+
+func (m *ThanosSeriesResponse) GetHeaders() []*ResponseHeader {
+	if m != nil {
+		return m.Headers
+	}
+	return nil
 }
 
 type ResponseHeader struct {

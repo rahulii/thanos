@@ -9,7 +9,6 @@ import (
 	"testing"
 	"time"
 
-	protobuf "github.com/gogo/protobuf/types"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
@@ -17,13 +16,13 @@ import (
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/testpromcompatibility"
 )
-func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
-	timestamp,_ := protobuf.TimestampProto(t)
-	return timestamp
+func timeToTimestamp(t time.Time) *Timestamp {
+	protoTimestamp := timeToProtoTimestamp(t)
+	t1 := Timestamp{Seconds: protoTimestamp.Seconds,Nanos: protoTimestamp.Nanos}
+	return &t1
 }
-
 func TestJSONUnmarshalMarshal(t *testing.T) {
-	now := time.Now()
+	now := time.Now().UTC()
 	twoHoursAgo := now.Add(2 * time.Hour)
 
 	for _, tcase := range []struct {
@@ -48,7 +47,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						Name:                    "group1",
 						File:                    "file1.yml",
 						Interval:                2442,
-						LastEvaluation:          timeToProtoTimestamp(now),
+						LastEvaluation:          now,
 						EvaluationTime:          2.1,
 						PartialResponseStrategy: "ABORT",
 					},
@@ -60,7 +59,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						Name:                      "group1",
 						File:                      "file1.yml",
 						Interval:                  2442,
-						LastEvaluation:            timeToProtoTimestamp(now),
+						LastEvaluation:            timeToTimestamp(now),
 						EvaluationDurationSeconds: 2.1,
 						PartialResponseStrategy:   storepb.PartialResponseStrategy_ABORT,
 						Rules:                     []*Rule{},
@@ -73,14 +72,13 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 			input: &testpromcompatibility.RuleDiscovery{
 				RuleGroups: []*testpromcompatibility.RuleGroup{
 					{
-						LastEvaluation: timeToProtoTimestamp(time.Time{}),
 					},
 				},
 			},
 			expectedProto: &RuleGroups{
 				Groups: []*RuleGroup{
 					{
-						LastEvaluation: timeToProtoTimestamp(time.Time{}),
+					
 						PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 					},
 				},
@@ -101,7 +99,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						},
 						File:                    "file1.yml",
 						Interval:                2442,
-						LastEvaluation:          timeToProtoTimestamp(now),
+						LastEvaluation:          now,
 						EvaluationTime:          2.1,
 						PartialResponseStrategy: "ABORT",
 					},
@@ -123,7 +121,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						},
 						File:                    "file1.yml",
 						Interval:                2442,
-						LastEvaluation:          timeToProtoTimestamp(now),
+						LastEvaluation:          now,
 						EvaluationTime:          2.1,
 						PartialResponseStrategy: "ABORT",
 					},
@@ -146,7 +144,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						},
 						File:                    "file1.yml",
 						Interval:                2442,
-						LastEvaluation:          timeToProtoTimestamp(now),
+						LastEvaluation:          now,
 						EvaluationTime:          2.1,
 						PartialResponseStrategy: "ABORT",
 					},
@@ -162,7 +160,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						Name:                    "group1",
 						File:                    "file1.yml",
 						Interval:                2442,
-						LastEvaluation:          timeToProtoTimestamp(now),
+						LastEvaluation:          now,
 						EvaluationTime:          2.1,
 						PartialResponseStrategy: "asdfsdfsdfsd",
 					},
@@ -258,7 +256,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								},
 								LastError:      "2",
 								Health:         "health",
-								LastEvaluation: timeToProtoTimestamp(now.Add(-2 * time.Minute)),
+								LastEvaluation: now.Add(-2 * time.Minute),
 								EvaluationTime: 2.6,
 							},
 							testpromcompatibility.AlertingRule{
@@ -291,7 +289,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 										Labels:                  nil,
 										Annotations:             nil,
 										State:                   "firing",
-										ActiveAt:                timeToProtoTimestamp(twoHoursAgo),
+										ActiveAt:                &twoHoursAgo,
 										Value:                   "2143",
 										PartialResponseStrategy: "ABORT",
 									},
@@ -299,13 +297,13 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								LastError:      "1",
 								Duration:       60,
 								State:          "pending",
-								LastEvaluation: timeToProtoTimestamp(now.Add(-1 * time.Minute)),
+								LastEvaluation: now.Add(-1 * time.Minute),
 								EvaluationTime: 1.1,
 							},
 						},
 						File:                    "file1.yml",
 						Interval:                2442,
-						LastEvaluation:          timeToProtoTimestamp(now),
+						LastEvaluation:          now,
 						EvaluationTime:          2.1,
 						PartialResponseStrategy: "ABORT",
 					},
@@ -313,7 +311,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						Name:                    "group2",
 						File:                    "file2.yml",
 						Interval:                242342442,
-						LastEvaluation:          timeToProtoTimestamp(now.Add(40 * time.Hour)),
+						LastEvaluation:          now.Add(40 * time.Hour),
 						EvaluationTime:          21244.1,
 						PartialResponseStrategy: "ABORT",
 					},
@@ -335,7 +333,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								},
 								LastError:                 "2",
 								Health:                    "health",
-								LastEvaluation:            timeToProtoTimestamp(now.Add(-2 * time.Minute)),
+								LastEvaluation:            timeToTimestamp(now.Add(-2 * time.Minute)),
 								EvaluationDurationSeconds: 2.6,
 							}),
 							NewAlertingRule(&Alert{
@@ -372,7 +370,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 									},
 									{
 										State:                   AlertState_FIRING,
-										ActiveAt:                timeToProtoTimestamp(twoHoursAgo),
+										ActiveAt:                timeToTimestamp(twoHoursAgo),
 										Value:                   "2143",
 										PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 									},
@@ -381,13 +379,13 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								State:                     AlertState_PENDING,
 								LastError:                 "1",
 								Health:                    "health2",
-								LastEvaluation:            timeToProtoTimestamp(now.Add(-1 * time.Minute)),
+								LastEvaluation:            timeToTimestamp(now.Add(-1 * time.Minute)),
 								EvaluationDurationSeconds: 1.1,
 							}),
 						},
 						File:                      "file1.yml",
 						Interval:                  2442,
-						LastEvaluation:            timeToProtoTimestamp(now),
+						LastEvaluation:            timeToTimestamp(now),
 						EvaluationDurationSeconds: 2.1,
 						PartialResponseStrategy:   storepb.PartialResponseStrategy_ABORT,
 					},
@@ -395,7 +393,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 						Name:                      "group2",
 						File:                      "file2.yml",
 						Interval:                  242342442,
-						LastEvaluation:            timeToProtoTimestamp(now.Add(40 * time.Hour)),
+						LastEvaluation:            timeToTimestamp(now.Add(40 * time.Hour)),
 						EvaluationDurationSeconds: 21244.1,
 						PartialResponseStrategy:   storepb.PartialResponseStrategy_ABORT,
 						Rules:                     []*Rule{},
@@ -406,9 +404,9 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 	} {
 		t.Run(tcase.name, func(t *testing.T) {
 			jsonInput, err := json.Marshal(tcase.input)
-			fmt.Println(tcase.name," ",string(jsonInput))
 			testutil.Ok(t, err)
 			proto := RuleGroups{}
+			fmt.Println(tcase.name,string(jsonInput))
 			err = json.Unmarshal(jsonInput, &proto)
 			if tcase.expectedErr != nil {
 				testutil.NotOk(t, err)
@@ -416,7 +414,6 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 				return
 			}
 			testutil.Ok(t, err)
-			fmt.Println(proto.String())
 			testutil.Equals(t, tcase.expectedProto.String(), proto.String())
 
 			jsonProto, err := json.Marshal(proto)

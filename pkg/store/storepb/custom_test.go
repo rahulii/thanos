@@ -82,7 +82,7 @@ type errSeriesSet struct{ err error }
 
 func (errSeriesSet) Next() bool { return false }
 
-func (errSeriesSet) At() (labels.Labels, []AggrChunk) { return nil, nil }
+func (errSeriesSet) At() (labels.Labels, []*AggrChunk) { return nil, nil }
 
 func (e errSeriesSet) Err() error { return e.err }
 
