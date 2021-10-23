@@ -5,7 +5,6 @@ package rulespb
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 
@@ -72,13 +71,14 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 			input: &testpromcompatibility.RuleDiscovery{
 				RuleGroups: []*testpromcompatibility.RuleGroup{
 					{
+						LastEvaluation: time.Time{},
 					},
 				},
 			},
 			expectedProto: &RuleGroups{
 				Groups: []*RuleGroup{
 					{
-					
+						LastEvaluation: timeToTimestamp(time.Time{}),
 						PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 					},
 				},
@@ -274,10 +274,10 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								Health: "health2",
 								Alerts: []*testpromcompatibility.Alert{
 									{
-										Labels: labels.Labels{
+										Labels: &labels.Labels{
 											{Name: "instance1", Value: "1"},
 										},
-										Annotations: labels.Labels{
+										Annotations: &labels.Labels{
 											{Name: "annotation1", Value: "2"},
 										},
 										State:                   "inactive",
@@ -406,7 +406,6 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 			jsonInput, err := json.Marshal(tcase.input)
 			testutil.Ok(t, err)
 			proto := RuleGroups{}
-			fmt.Println(tcase.name,string(jsonInput))
 			err = json.Unmarshal(jsonInput, &proto)
 			if tcase.expectedErr != nil {
 				testutil.NotOk(t, err)

@@ -29,7 +29,7 @@ type RuleGroup struct {
 	File           string    `json:"file"`
 	Rules          []Rule    `json:"rules"`
 	Interval       float64   `json:"interval"`
-	EvaluationTime float64   `json:"evaluationTime"`
+	EvaluationTime float64   `json:"evaluationTime,omitempty"`
 	LastEvaluation time.Time `json:"lastEvaluation"`
 
 	PartialResponseStrategy string `json:"partialResponseStrategy"`
@@ -66,8 +66,8 @@ type AlertAPI struct {
 }
 
 type Alert struct {
-	Labels      labels.Labels `json:"labels"`
-	Annotations labels.Labels `json:"annotations"`
+	Labels      *labels.Labels `json:"labels"`
+	Annotations *labels.Labels `json:"annotations"`
 	State       string        `json:"state"`
 	ActiveAt    *time.Time    `json:"activeAt,omitempty"`
 	Value       string        `json:"value"`

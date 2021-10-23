@@ -51,9 +51,10 @@ func (m *Timestamp) UnmarshalJSON(data []byte) error{
 		return err
 	}
 
-	if ret.IsZero() {
-		return nil
-	}
+	// if ret.IsZero() {
+	// 	m = nil
+	// 	return nil
+	// }
 	protoTimestamp := timeToProtoTimestamp(ret)
 
 	m.Seconds = protoTimestamp.Seconds
