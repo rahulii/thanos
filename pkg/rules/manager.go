@@ -40,8 +40,22 @@ type Group struct {
 	PartialResponseStrategy storepb.PartialResponseStrategy
 }
 
+func timeToProtoTimestamp(t time.Time) *types.Timestamp{
+	timestamp,_ := types.TimestampProto(t)
+	return timestamp
+}
+
+func defaultTimeToTimestamp(t time.Time) *rulespb.Timestamp{
+	t1 := &rulespb.Timestamp{}
+	protoTime := timeToProtoTimestamp(t)
+
+	t1.Seconds = protoTime.Seconds
+	t1.Nanos = protoTime.Nanos
+	return t1
+}
+
 func (g Group) toProto() *rulespb.RuleGroup {
-	lastEvaluation,_ := types.TimestampProto(g.GetLastEvaluation().UTC())
+	lastEvaluation := defaultTimeToTimestamp(g.GetLastEvaluation().UTC())
 
 	ret := &rulespb.RuleGroup{
 		Name:                    g.Name(),
@@ -61,7 +75,7 @@ func (g Group) toProto() *rulespb.RuleGroup {
 
 		switch rule := r.(type) {
 		case *rules.AlertingRule:
-			lastEvaluation,_ := types.TimestampProto(rule.GetEvaluationTimestamp().UTC())
+			lastEvaluation := defaultTimeToTimestamp(rule.GetEvaluationTimestamp().UTC())
 			ret.Rules = append(ret.Rules, &rulespb.Rule{
 				Result: &rulespb.Rule_Alert{Alert: &rulespb.Alert{
 					State:                     rulespb.AlertState(rule.State()),
@@ -101,7 +115,7 @@ func ActiveAlertsToProto(s storepb.PartialResponseStrategy, a *rules.AlertingRul
 	active := a.ActiveAlerts()
 	ret := make([]*rulespb.AlertInstance, len(active))
 	for i, ruleAlert := range active {
-		activeAt,_ := types.TimestampProto(ruleAlert.ActiveAt)
+		activeAt := defaultTimeToTimestamp(ruleAlert.ActiveAt)
 		ret[i] = &rulespb.AlertInstance{
 			PartialResponseStrategy: s,
 			Labels:                  &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(ruleAlert.Labels)},

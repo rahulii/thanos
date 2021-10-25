@@ -5,6 +5,7 @@ package rulespb
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 	"time"
 
@@ -71,14 +72,13 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 			input: &testpromcompatibility.RuleDiscovery{
 				RuleGroups: []*testpromcompatibility.RuleGroup{
 					{
-						LastEvaluation: time.Time{},
 					},
 				},
 			},
 			expectedProto: &RuleGroups{
 				Groups: []*RuleGroup{
 					{
-						LastEvaluation: timeToTimestamp(time.Time{}),
+						LastEvaluation: &Timestamp{},
 						PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 					},
 				},
@@ -228,6 +228,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								EvaluationDurationSeconds: 1.1,
 							}),
 						},
+						LastEvaluation: &Timestamp{},
 						File:                      "file1.yml",
 						Interval:                  2442,
 						EvaluationDurationSeconds: 2.1,

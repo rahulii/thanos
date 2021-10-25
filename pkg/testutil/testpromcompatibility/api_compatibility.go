@@ -6,17 +6,10 @@ package testpromcompatibility
 import (
 	"encoding/json"
 	"time"
-
-	protobuf "github.com/gogo/protobuf/types"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/prometheus/prometheus/rules"
 )
 
-
-func timestampToTime(t *protobuf.Timestamp) *time.Time{
-    time,_ := protobuf.TimestampFromProto(t)
-    return &time
-}
 
 type RuleDiscovery struct {
 	RuleGroups []*RuleGroup `json:"groups"`
@@ -29,8 +22,8 @@ type RuleGroup struct {
 	File           string    `json:"file"`
 	Rules          []Rule    `json:"rules"`
 	Interval       float64   `json:"interval"`
-	EvaluationTime float64   `json:"evaluationTime,omitempty"`
-	LastEvaluation time.Time `json:"lastEvaluation"`
+	EvaluationTime float64   `json:"evaluationTime"`
+	LastEvaluation time.Time `json:"lastEvaluation,omitempty"`
 
 	PartialResponseStrategy string `json:"partialResponseStrategy"`
 }
@@ -87,7 +80,7 @@ type AlertingRule struct {
 	Health         rules.RuleHealth `json:"health"`
 	LastError      string           `json:"lastError,omitempty"`
 	EvaluationTime float64          `json:"evaluationTime"`
-	LastEvaluation time.Time        `json:"lastEvaluation"`
+	LastEvaluation time.Time        `json:"lastEvaluation,omitempty"`
 	// Type of an AlertingRule is always "alerting".
 	Type string `json:"type"`
 }

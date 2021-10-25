@@ -21,6 +21,7 @@ const (
 	RuleAlertingType  = "alerting"
 )
 
+
 func timestampToTime(t *protobuf.Timestamp) time.Time {
 	if t == nil {
 		return time.Time{}
@@ -51,10 +52,10 @@ func (m *Timestamp) UnmarshalJSON(data []byte) error{
 		return err
 	}
 
-	// if ret.IsZero() {
-	// 	m = nil
-	// 	return nil
-	// }
+	if ret.IsZero(){
+		return nil
+	}
+
 	protoTimestamp := timeToProtoTimestamp(ret)
 
 	m.Seconds = protoTimestamp.Seconds
@@ -136,9 +137,9 @@ func NewAlertingRule(a *Alert) *Rule {
 	if a.Labels == nil{
 		a.Labels = &labelpb.ZLabelSet{}
 	}
-	if a.LastEvaluation == nil {
-		a.LastEvaluation = &Timestamp{}
-	}
+	 if a.LastEvaluation == nil {
+	 	a.LastEvaluation = &Timestamp{}
+	 }
 	return &Rule{
 		Result: &Rule_Alert{Alert: a},
 	}
