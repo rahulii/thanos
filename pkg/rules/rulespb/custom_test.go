@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	gogoproto "github.com/gogo/protobuf/proto"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
@@ -15,9 +16,10 @@ import (
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/testpromcompatibility"
 )
+
 func timeToTimestamp(t time.Time) *Timestamp {
 	protoTimestamp := timeToProtoTimestamp(t)
-	t1 := Timestamp{Seconds: protoTimestamp.Seconds,Nanos: protoTimestamp.Nanos}
+	t1 := Timestamp{Seconds: protoTimestamp.Seconds, Nanos: protoTimestamp.Nanos}
 	return &t1
 }
 func TestJSONUnmarshalMarshal(t *testing.T) {
@@ -70,14 +72,13 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 			name: "one group with one empty group",
 			input: &testpromcompatibility.RuleDiscovery{
 				RuleGroups: []*testpromcompatibility.RuleGroup{
-					{
-					},
+					{},
 				},
 			},
 			expectedProto: &RuleGroups{
 				Groups: []*RuleGroup{
 					{
-						LastEvaluation: &Timestamp{},
+						LastEvaluation:          &Timestamp{},
 						PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 					},
 				},
@@ -227,7 +228,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								EvaluationDurationSeconds: 1.1,
 							}),
 						},
-						LastEvaluation: &Timestamp{},
+						LastEvaluation:            &Timestamp{},
 						File:                      "file1.yml",
 						Interval:                  2442,
 						EvaluationDurationSeconds: 2.1,
@@ -405,7 +406,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 		t.Run(tcase.name, func(t *testing.T) {
 			jsonInput, err := json.Marshal(tcase.input)
 			testutil.Ok(t, err)
-			proto := RuleGroups{}
+			proto := &RuleGroups{}
 			err = json.Unmarshal(jsonInput, &proto)
 			if tcase.expectedErr != nil {
 				testutil.NotOk(t, err)
@@ -413,7 +414,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 				return
 			}
 			testutil.Ok(t, err)
-			testutil.Equals(t, tcase.expectedProto.String(), proto.String())
+			testutil.Equals(t, gogoproto.MarshalTextString(tcase.expectedProto), gogoproto.MarshalTextString(proto))
 
 			jsonProto, err := json.Marshal(proto)
 			testutil.Ok(t, err)
