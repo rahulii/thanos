@@ -176,7 +176,7 @@ func ruleAndAssert(t *testing.T, ctx context.Context, addr, typ string, want []*
 		}
 
 		for ig, g := range res {
-			res[ig].LastEvaluation = timeToProtoTimestamp(time.Time{})
+			res[ig].LastEvaluation = (*rulespb.Timestamp)(timeToProtoTimestamp(time.Time{}))
 			res[ig].EvaluationDurationSeconds = 0
 			res[ig].Interval = 0
 			res[ig].PartialResponseStrategy = 0

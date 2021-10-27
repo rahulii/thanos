@@ -94,15 +94,14 @@ func timestampToTime(t *rulespb.Timestamp) time.Time{
 	
 	t1 := types.Timestamp{}
 	if t == nil{
-		x := protoTimestampToTime(&t1)
-		return x
-	} else{
-		t1.Seconds = t.Seconds
-		t1.Nanos = t.Nanos
-		//convert proto Timestamp to time.Time
-		x := protoTimestampToTime(&t1)
-		return x
+		return time.Time{}
 	}
+	t1.Seconds = t.Seconds
+	t1.Nanos = t.Nanos
+	//convert proto Timestamp to time.Time
+	x := protoTimestampToTime(&t1)
+	return x
+
 	
 
 }

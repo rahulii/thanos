@@ -5,7 +5,6 @@ package rulespb
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 	"time"
 

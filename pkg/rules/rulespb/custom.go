@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
-	"github.com/gogo/protobuf/types"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
@@ -21,7 +20,18 @@ const (
 	RuleAlertingType  = "alerting"
 )
 
+func (t *Timestamp) IsZero() bool {
+	t1 := time.Time{}
+	return t == defaultTimeToTimestamp(t1)
+}
+func defaultTimeToTimestamp(t time.Time) *Timestamp{
+	t1 := &Timestamp{}
+	protoTime := timeToProtoTimestamp(t)
 
+	t1.Seconds = protoTime.Seconds
+	t1.Nanos = protoTime.Nanos
+	return t1
+}
 func timestampToTime(t *protobuf.Timestamp) time.Time {
 	if t == nil {
 		return time.Time{}
@@ -35,7 +45,7 @@ func timestampToTime(t *protobuf.Timestamp) time.Time {
 }
 
 func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
-	timestamp,_ := types.TimestampProto(t)
+	timestamp,_ := protobuf.TimestampProto(t)
 	return timestamp
 }
 
@@ -139,6 +149,11 @@ func NewAlertingRule(a *Alert) *Rule {
 	}
 	 if a.LastEvaluation == nil {
 	 	a.LastEvaluation = &Timestamp{}
+	 }
+	 for i:=0;i<len(a.Alerts);i++{
+		 if a.Alerts[i].ActiveAt == nil{
+			 a.Alerts[i].ActiveAt = (*Timestamp)(timeToProtoTimestamp(time.Time{}))
+		 }
 	 }
 	return &Rule{
 		Result: &Rule_Alert{Alert: a},

@@ -121,7 +121,7 @@ func targetAndAssert(t *testing.T, ctx context.Context, addr, state string, want
 		}
 
 		for it := range res.ActiveTargets {
-			res.ActiveTargets[it].LastScrape = time.Time{}
+			res.ActiveTargets[it].LastScrape = timeToProtoTimestamp(time.Time{})
 			res.ActiveTargets[it].LastScrapeDuration = 0
 			res.ActiveTargets[it].GlobalUrl = ""
 		}
