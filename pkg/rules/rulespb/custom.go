@@ -57,6 +57,11 @@ func validateTimestamp(ts *Timestamp) error {
 }
 
 func TimeToTimestamp(t time.Time) *Timestamp {
+	if t.IsZero() {
+		ts := &Timestamp{}
+		ts.Seconds = time.Time{}.Unix()
+		return ts
+	}
 	ts := &Timestamp{
 		Seconds: t.Unix(),
 		Nanos:   int32(t.Nanosecond()),
@@ -83,14 +88,10 @@ func (m *Timestamp) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	if ret.IsZero() {
-		return nil
-	}
+	actualTimestamp := TimeToTimestamp(ret)
 
-	protoTimestamp := TimeToTimestamp(ret)
-
-	m.Seconds = protoTimestamp.Seconds
-	m.Nanos = protoTimestamp.Nanos
+	m.Seconds = actualTimestamp.Seconds
+	m.Nanos = actualTimestamp.Nanos
 
 	return nil
 }

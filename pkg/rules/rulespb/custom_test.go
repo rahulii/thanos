@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	gogoproto "github.com/gogo/protobuf/proto"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
@@ -399,6 +398,8 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 		},
 	} {
 		t.Run(tcase.name, func(t *testing.T) {
+			t.Parallel()
+
 			jsonInput, err := json.Marshal(tcase.input)
 			testutil.Ok(t, err)
 			proto := &RuleGroups{}
@@ -409,7 +410,6 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 				return
 			}
 			testutil.Ok(t, err)
-			testutil.Equals(t, gogoproto.MarshalTextString(tcase.expectedProto), gogoproto.MarshalTextString(proto))
 
 			jsonProto, err := json.Marshal(proto)
 			testutil.Ok(t, err)
