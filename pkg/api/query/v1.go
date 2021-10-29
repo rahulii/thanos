@@ -30,7 +30,6 @@ import (
 
 	cortexutil "github.com/cortexproject/cortex/pkg/util"
 	"github.com/go-kit/kit/log"
-	"github.com/gogo/protobuf/types"
 	"github.com/opentracing/opentracing-go"
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/prometheus"
@@ -72,38 +71,6 @@ const (
 	Step                     = "step"
 	Stats                    = "stats"
 )
-
-func timeToProtoTimestamp(t time.Time) *types.Timestamp {
-	timestamp, _ := types.TimestampProto(t)
-	return timestamp
-}
-
-func defaultTimeToTimestamp(t time.Time) *rulespb.Timestamp {
-	t1 := &rulespb.Timestamp{}
-	protoTime := timeToProtoTimestamp(t)
-
-	t1.Seconds = protoTime.Seconds
-	t1.Nanos = protoTime.Nanos
-	return t1
-}
-func protoTimestampToTime(t *types.Timestamp) time.Time {
-	time, _ := types.TimestampFromProto(t)
-	return time
-}
-func timestampToTime(t *rulespb.Timestamp) time.Time {
-	//convert custom Timestamp to protoTimestamp
-
-	t1 := types.Timestamp{}
-	if t == nil {
-		return time.Time{}
-	}
-	t1.Seconds = t.Seconds
-	t1.Nanos = t.Nanos
-	//convert proto Timestamp to time.Time
-	x := protoTimestampToTime(&t1)
-	return x
-
-}
 
 // QueryAPI is an API used by Thanos Querier.
 type QueryAPI struct {

@@ -1445,11 +1445,10 @@ func TestParseStoreDebugMatchersParam(t *testing.T) {
 }
 
 func TestRulesHandler(t *testing.T) {
-	twoHAgo := defaultTimeToTimestamp(time.Now().Add(-2 * time.Hour))
 	all := []*rulespb.Rule{
 		rulespb.NewRecordingRule(&rulespb.RecordingRule{
 			Name:                      "1",
-			LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(1 * time.Minute)),
+			LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(1 * time.Minute)),
 			EvaluationDurationSeconds: 12,
 			Health:                    "x",
 			Query:                     "sum(up)",
@@ -1458,7 +1457,7 @@ func TestRulesHandler(t *testing.T) {
 		}),
 		rulespb.NewRecordingRule(&rulespb.RecordingRule{
 			Name:                      "2",
-			LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(2 * time.Minute)),
+			LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(2 * time.Minute)),
 			EvaluationDurationSeconds: 12,
 			Health:                    "x",
 			Query:                     "sum(up1)",
@@ -1466,7 +1465,7 @@ func TestRulesHandler(t *testing.T) {
 		}),
 		rulespb.NewAlertingRule(&rulespb.Alert{
 			Name:                      "3",
-			LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(3 * time.Minute)),
+			LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(3 * time.Minute)),
 			EvaluationDurationSeconds: 12,
 			Health:                    "x",
 			Query:                     "sum(up2) == 2",
@@ -1478,26 +1477,26 @@ func TestRulesHandler(t *testing.T) {
 					Labels:      &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "1"}}},
 					Annotations: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "2"}}},
 					State:       rulespb.AlertState_FIRING,
-					ActiveAt:    twoHAgo,
 					Value:       "1",
 					// This is unlikely if groups is warn, but test nevertheless.
 					PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
+					ActiveAt:                rulespb.TimeToTimestamp(time.Time{}),
 				},
 				{
 					Labels:      &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "inside", Value: "3"}}},
 					Annotations: &labelpb.ZLabelSet{Labels: []*labelpb.Label{{Name: "insideann", Value: "4"}}},
 					State:       rulespb.AlertState_PENDING,
-					ActiveAt:    nil,
 					Value:       "2",
 					// This is unlikely if groups is warn, but test nevertheless.
 					PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
+					ActiveAt:                rulespb.TimeToTimestamp(time.Time{}),
 				},
 			},
 			State: rulespb.AlertState_FIRING,
 		}),
 		rulespb.NewAlertingRule(&rulespb.Alert{
 			Name:                      "4",
-			LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(4 * time.Minute)),
+			LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(4 * time.Minute)),
 			EvaluationDurationSeconds: 122,
 			Health:                    "x",
 			DurationSeconds:           102,
@@ -1516,7 +1515,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all,
 					Interval:                  1,
 					EvaluationDurationSeconds: 214,
-					LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(10 * time.Minute)),
+					LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(10 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_WARN,
 				},
 				{
@@ -1525,7 +1524,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all[3:],
 					Interval:                  10,
 					EvaluationDurationSeconds: 2142,
-					LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(100 * time.Minute)),
+					LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(100 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_ABORT,
 				},
 			},
@@ -1536,7 +1535,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all[:2],
 					Interval:                  1,
 					EvaluationDurationSeconds: 214,
-					LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(20 * time.Minute)),
+					LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(20 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_WARN,
 				},
 			},
@@ -1547,7 +1546,7 @@ func TestRulesHandler(t *testing.T) {
 					Rules:                     all[2:],
 					Interval:                  1,
 					EvaluationDurationSeconds: 214,
-					LastEvaluation:            defaultTimeToTimestamp(time.Time{}.Add(30 * time.Minute)),
+					LastEvaluation:            rulespb.TimeToTimestamp(time.Time{}.Add(30 * time.Minute)),
 					PartialResponseStrategy:   storepb.PartialResponseStrategy_WARN,
 				},
 			},
@@ -1563,8 +1562,6 @@ func TestRulesHandler(t *testing.T) {
 	a0 := labelpb.ProtobufLabelsToPromLabels(all[2].GetAlert().Alerts[0].Annotations.Labels)
 	l1 := labelpb.ProtobufLabelsToPromLabels(all[2].GetAlert().Alerts[1].Labels.Labels)
 	a1 := labelpb.ProtobufLabelsToPromLabels(all[2].GetAlert().Alerts[1].Annotations.Labels)
-	activeAtTime0 := timestampToTime(all[2].GetAlert().Alerts[0].ActiveAt)
-	activeAtTime1 := timestampToTime(all[2].GetAlert().Alerts[1].ActiveAt)
 	expectedAll := []testpromcompatibility.Rule{
 		testpromcompatibility.RecordingRule{
 			Name:           all[0].GetRecording().Name,
@@ -1572,7 +1569,7 @@ func TestRulesHandler(t *testing.T) {
 			Labels:         labelpb.ProtobufLabelsToPromLabels(all[0].GetRecording().Labels.Labels),
 			Health:         rules.RuleHealth(all[0].GetRecording().Health),
 			LastError:      all[0].GetRecording().LastError,
-			LastEvaluation: timestampToTime(all[0].GetRecording().LastEvaluation),
+			LastEvaluation: rulespb.TimestampToTime(all[0].GetRecording().LastEvaluation),
 			EvaluationTime: all[0].GetRecording().EvaluationDurationSeconds,
 			Type:           "recording",
 		},
@@ -1582,7 +1579,7 @@ func TestRulesHandler(t *testing.T) {
 			Labels:         labelpb.ProtobufLabelsToPromLabels(all[1].GetRecording().Labels.Labels),
 			Health:         rules.RuleHealth(all[1].GetRecording().Health),
 			LastError:      all[1].GetRecording().LastError,
-			LastEvaluation: timestampToTime(all[1].GetRecording().LastEvaluation),
+			LastEvaluation: rulespb.TimestampToTime(all[1].GetRecording().LastEvaluation),
 			EvaluationTime: all[1].GetRecording().EvaluationDurationSeconds,
 			Type:           "recording",
 		},
@@ -1593,7 +1590,7 @@ func TestRulesHandler(t *testing.T) {
 			Labels:         labelpb.ProtobufLabelsToPromLabels(all[2].GetAlert().Labels.Labels),
 			Health:         rules.RuleHealth(all[2].GetAlert().Health),
 			LastError:      all[2].GetAlert().LastError,
-			LastEvaluation: timestampToTime(all[2].GetAlert().LastEvaluation),
+			LastEvaluation: rulespb.TimestampToTime(all[2].GetAlert().LastEvaluation),
 			EvaluationTime: all[2].GetAlert().EvaluationDurationSeconds,
 			Duration:       all[2].GetAlert().DurationSeconds,
 			Annotations:    labelpb.ProtobufLabelsToPromLabels(all[2].GetAlert().Annotations.Labels),
@@ -1602,7 +1599,6 @@ func TestRulesHandler(t *testing.T) {
 					Labels:                  &l0,
 					Annotations:             &a0,
 					State:                   strings.ToLower(all[2].GetAlert().Alerts[0].State.String()),
-					ActiveAt:                activeAtTime0,
 					Value:                   all[2].GetAlert().Alerts[0].Value,
 					PartialResponseStrategy: all[2].GetAlert().Alerts[0].PartialResponseStrategy.String(),
 				},
@@ -1610,7 +1606,6 @@ func TestRulesHandler(t *testing.T) {
 					Labels:                  &l1,
 					Annotations:             &a1,
 					State:                   strings.ToLower(all[2].GetAlert().Alerts[1].State.String()),
-					ActiveAt:                activeAtTime1,
 					Value:                   all[2].GetAlert().Alerts[1].Value,
 					PartialResponseStrategy: all[2].GetAlert().Alerts[1].PartialResponseStrategy.String(),
 				},
@@ -1624,7 +1619,7 @@ func TestRulesHandler(t *testing.T) {
 			Labels:         labelpb.ProtobufLabelsToPromLabels(all[3].GetAlert().Labels.Labels),
 			Health:         rules.RuleHealth(all[2].GetAlert().Health),
 			LastError:      all[3].GetAlert().LastError,
-			LastEvaluation: timestampToTime(all[3].GetAlert().LastEvaluation),
+			LastEvaluation: rulespb.TimestampToTime(all[3].GetAlert().LastEvaluation),
 			EvaluationTime: all[3].GetAlert().EvaluationDurationSeconds,
 			Duration:       all[3].GetAlert().DurationSeconds,
 			Annotations:    nil,

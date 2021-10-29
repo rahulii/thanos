@@ -21,7 +21,7 @@ const (
 	RuleAlertingType  = "alerting"
 )
 
-func timestampToTime(ts *Timestamp) time.Time {
+func TimestampToTime(ts *Timestamp) time.Time {
 	var tm time.Time
 	if ts == nil {
 		tm = time.Unix(0, 0).UTC() // treat nil like the empty Timestamp
@@ -56,7 +56,7 @@ func validateTimestamp(ts *Timestamp) error {
 	return nil
 }
 
-func timeToTimestamp(t time.Time) *Timestamp {
+func TimeToTimestamp(t time.Time) *Timestamp {
 	ts := &Timestamp{
 		Seconds: t.Unix(),
 		Nanos:   int32(t.Nanosecond()),
@@ -72,7 +72,7 @@ func timeToTimestamp(t time.Time) *Timestamp {
 }
 
 func (m *Timestamp) MarshalJSON() ([]byte, error) {
-	ret := timestampToTime(m)
+	ret := TimestampToTime(m)
 	return json.Marshal(ret)
 }
 
@@ -87,7 +87,7 @@ func (m *Timestamp) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 
-	protoTimestamp := timeToTimestamp(ret)
+	protoTimestamp := TimeToTimestamp(ret)
 
 	m.Seconds = protoTimestamp.Seconds
 	m.Nanos = protoTimestamp.Nanos
