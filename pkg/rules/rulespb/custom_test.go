@@ -17,11 +17,6 @@ import (
 	"github.com/thanos-io/thanos/pkg/testutil/testpromcompatibility"
 )
 
-func timeToTimestamp(t time.Time) *Timestamp {
-	protoTimestamp := timeToProtoTimestamp(t)
-	t1 := Timestamp{Seconds: protoTimestamp.Seconds, Nanos: protoTimestamp.Nanos}
-	return &t1
-}
 func TestJSONUnmarshalMarshal(t *testing.T) {
 	now := time.Now().UTC()
 	twoHoursAgo := now.Add(2 * time.Hour)
@@ -78,7 +73,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 			expectedProto: &RuleGroups{
 				Groups: []*RuleGroup{
 					{
-						LastEvaluation:          &Timestamp{},
+						LastEvaluation:          timeToTimestamp(time.Time{}),
 						PartialResponseStrategy: storepb.PartialResponseStrategy_ABORT,
 					},
 				},
@@ -226,9 +221,10 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 								LastError:                 "1",
 								Health:                    "health2",
 								EvaluationDurationSeconds: 1.1,
+								LastEvaluation:            timeToTimestamp(time.Time{}),
 							}),
 						},
-						LastEvaluation:            &Timestamp{},
+						LastEvaluation:            timeToTimestamp(time.Time{}),
 						File:                      "file1.yml",
 						Interval:                  2442,
 						EvaluationDurationSeconds: 2.1,
@@ -282,7 +278,6 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 											{Name: "annotation1", Value: "2"},
 										},
 										State:                   "inactive",
-										ActiveAt:                nil,
 										Value:                   "1",
 										PartialResponseStrategy: "WARN",
 									},
@@ -290,7 +285,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 										Labels:                  nil,
 										Annotations:             nil,
 										State:                   "firing",
-										ActiveAt:                &twoHoursAgo,
+										ActiveAt:                twoHoursAgo,
 										Value:                   "2143",
 										PartialResponseStrategy: "ABORT",
 									},
@@ -365,7 +360,7 @@ func TestJSONUnmarshalMarshal(t *testing.T) {
 											},
 										},
 										State:                   AlertState_INACTIVE,
-										ActiveAt:                nil,
+										ActiveAt:                timeToTimestamp(time.Time{}),
 										Value:                   "1",
 										PartialResponseStrategy: storepb.PartialResponseStrategy_WARN,
 									},

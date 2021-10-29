@@ -5,14 +5,15 @@ package rulespb
 
 import (
 	"encoding/json"
+	fmt "fmt"
 	"math/big"
 	"strconv"
 	"strings"
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
-	protobuf "github.com/gogo/protobuf/types"
-	"time"
 )
 
 const (
@@ -20,53 +21,73 @@ const (
 	RuleAlertingType  = "alerting"
 )
 
-func (t *Timestamp) IsZero() bool {
-	t1 := time.Time{}
-	return t == defaultTimeToTimestamp(t1)
-}
-func defaultTimeToTimestamp(t time.Time) *Timestamp{
-	t1 := &Timestamp{}
-	protoTime := timeToProtoTimestamp(t)
-
-	t1.Seconds = protoTime.Seconds
-	t1.Nanos = protoTime.Nanos
-	return t1
-}
-func timestampToTime(t *protobuf.Timestamp) time.Time {
-	if t == nil {
-		return time.Time{}
+func timestampToTime(ts *Timestamp) time.Time {
+	var tm time.Time
+	if ts == nil {
+		tm = time.Unix(0, 0).UTC() // treat nil like the empty Timestamp
+	} else {
+		tm = time.Unix(ts.Seconds, int64(ts.Nanos)).UTC()
 	}
-	empty := &protobuf.Timestamp{}
-	if t.Equal(empty) {
-		return time.Time{}
-	}
-	time, _ := protobuf.TimestampFromProto(t)
-	return time
+	return tm
 }
 
-func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
-	timestamp,_ := protobuf.TimestampProto(t)
-	return timestamp
+const (
+	// Seconds field of the earliest valid Timestamp.
+	// This is time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC).Unix().
+	minValidSeconds = -62135596800
+	// Seconds field just after the latest valid Timestamp.
+	// This is time.Date(10000, 1, 1, 0, 0, 0, 0, time.UTC).Unix().
+	maxValidSeconds = 253402300800
+)
+
+func validateTimestamp(ts *Timestamp) error {
+	if ts == nil {
+		return errors.New("timestamp: nil Timestamp")
+	}
+	if ts.Seconds < minValidSeconds {
+		return fmt.Errorf("timestamp: %#v before 0001-01-01", ts)
+	}
+	if ts.Seconds >= maxValidSeconds {
+		return fmt.Errorf("timestamp: %#v after 10000-01-01", ts)
+	}
+	if ts.Nanos < 0 || ts.Nanos >= 1e9 {
+		return fmt.Errorf("timestamp: %#v: nanos not in range [0, 1e9)", ts)
+	}
+	return nil
+}
+
+func timeToTimestamp(t time.Time) *Timestamp {
+	ts := &Timestamp{
+		Seconds: t.Unix(),
+		Nanos:   int32(t.Nanosecond()),
+	}
+	/*if err := validateTimestamp(ts); err != nil {
+		return nil, err
+	}
+	return ts, nil
+
+	timestamp, _ := protobuf.TimestampProto(t)
+	*/
+	return ts
 }
 
 func (m *Timestamp) MarshalJSON() ([]byte, error) {
-	ts := &protobuf.Timestamp{Seconds: m.Seconds, Nanos: m.Nanos}
-	ret := timestampToTime(ts)
+	ret := timestampToTime(m)
 	return json.Marshal(ret)
 }
 
-func (m *Timestamp) UnmarshalJSON(data []byte) error{
+func (m *Timestamp) UnmarshalJSON(data []byte) error {
 	ret := time.Time{}
-	err:= json.Unmarshal(data,&ret)
+	err := json.Unmarshal(data, &ret)
 	if err != nil {
 		return err
 	}
 
-	if ret.IsZero(){
+	if ret.IsZero() {
 		return nil
 	}
 
-	protoTimestamp := timeToProtoTimestamp(ret)
+	protoTimestamp := timeToTimestamp(ret)
 
 	m.Seconds = protoTimestamp.Seconds
 	m.Nanos = protoTimestamp.Nanos
@@ -106,11 +127,8 @@ func NewWarningRulesResponse(warning error) *RulesResponse {
 }
 
 func NewRecordingRule(r *RecordingRule) *Rule {
-	if r.Labels == nil{
+	if r.Labels == nil {
 		r.Labels = &labelpb.ZLabelSet{}
-	}
-	if r.LastEvaluation == nil {
-		r.LastEvaluation = &Timestamp{}
 	}
 	return &Rule{
 		Result: &Rule_Recording{Recording: r},
@@ -144,17 +162,10 @@ func NewAlertingRule(a *Alert) *Rule {
 	if a.Annotations == nil {
 		a.Annotations = &labelpb.ZLabelSet{}
 	}
-	if a.Labels == nil{
+	if a.Labels == nil {
 		a.Labels = &labelpb.ZLabelSet{}
 	}
-	 if a.LastEvaluation == nil {
-	 	a.LastEvaluation = &Timestamp{}
-	 }
-	 for i:=0;i<len(a.Alerts);i++{
-		 if a.Alerts[i].ActiveAt == nil{
-			 a.Alerts[i].ActiveAt = (*Timestamp)(timeToProtoTimestamp(time.Time{}))
-		 }
-	 }
+
 	return &Rule{
 		Result: &Rule_Alert{Alert: a},
 	}
@@ -215,7 +226,7 @@ func (r *Rule) GetLastEvaluation() *Timestamp {
 	case r.GetAlert() != nil:
 		return r.GetAlert().LastEvaluation
 	default:
-		return &Timestamp{}
+		return nil
 	}
 }
 
@@ -309,11 +320,8 @@ func (m *Rule) UnmarshalJSON(entry []byte) error {
 			return errors.Wrapf(err, "rule: recording rule unmarshal: %v", string(entry))
 		}
 
-		if r.Labels == nil{
+		if r.Labels == nil {
 			r.Labels = &labelpb.ZLabelSet{}
-		}
-		if r.LastEvaluation == nil {
-			r.LastEvaluation = &Timestamp{}
 		}
 
 		m.Result = &Rule_Recording{Recording: r}
@@ -325,11 +333,8 @@ func (m *Rule) UnmarshalJSON(entry []byte) error {
 		if r.Annotations == nil {
 			r.Annotations = &labelpb.ZLabelSet{}
 		}
-		if r.Labels == nil{
+		if r.Labels == nil {
 			r.Labels = &labelpb.ZLabelSet{}
-		}
-		if r.LastEvaluation == nil {
-			r.LastEvaluation = &Timestamp{}
 		}
 		m.Result = &Rule_Alert{Alert: r}
 	case "":
@@ -423,11 +428,11 @@ func (a1 *Alert) Compare(a2 *Alert) int {
 		return d
 	}
 
-	if a1.LastEvaluation.Seconds <  a2.LastEvaluation.Seconds {
+	if a1.LastEvaluation.Seconds < a2.LastEvaluation.Seconds {
 		return 1
 	}
 
-	if a1.LastEvaluation.Seconds >  a2.LastEvaluation.Seconds{
+	if a1.LastEvaluation.Seconds > a2.LastEvaluation.Seconds {
 		return -1
 	}
 

@@ -59,7 +59,6 @@ import (
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/e2eutil"
 	"github.com/thanos-io/thanos/pkg/testutil/testpromcompatibility"
-
 )
 
 func TestMain(m *testing.M) {
@@ -1603,7 +1602,7 @@ func TestRulesHandler(t *testing.T) {
 					Labels:                  &l0,
 					Annotations:             &a0,
 					State:                   strings.ToLower(all[2].GetAlert().Alerts[0].State.String()),
-					ActiveAt:                &activeAtTime0,
+					ActiveAt:                activeAtTime0,
 					Value:                   all[2].GetAlert().Alerts[0].Value,
 					PartialResponseStrategy: all[2].GetAlert().Alerts[0].PartialResponseStrategy.String(),
 				},
@@ -1611,7 +1610,7 @@ func TestRulesHandler(t *testing.T) {
 					Labels:                  &l1,
 					Annotations:             &a1,
 					State:                   strings.ToLower(all[2].GetAlert().Alerts[1].State.String()),
-					ActiveAt:                &activeAtTime1,
+					ActiveAt:                activeAtTime1,
 					Value:                   all[2].GetAlert().Alerts[1].Value,
 					PartialResponseStrategy: all[2].GetAlert().Alerts[1].PartialResponseStrategy.String(),
 				},

@@ -6,10 +6,10 @@ package testpromcompatibility
 import (
 	"encoding/json"
 	"time"
+
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/prometheus/prometheus/rules"
 )
-
 
 type RuleDiscovery struct {
 	RuleGroups []*RuleGroup `json:"groups"`
@@ -32,25 +32,23 @@ type RuleGroup struct {
 
 // https://github.com/prometheus/prometheus/blob/c530b4b456cc5f9ec249f771dff187eb7715dc9b/web/api/v1/api.go#L1016
 // MarshalJSON marshals a rulegroup while ensuring that `rules' is always non-empty.
- func (r *RuleGroup) MarshalJSON() ([]byte, error) {
- 	if r.Rules == nil {
- 		r.Rules = make([]Rule, 0)
- 	}
-	
-	 
+func (r *RuleGroup) MarshalJSON() ([]byte, error) {
+	if r.Rules == nil {
+		r.Rules = make([]Rule, 0)
+	}
 
-// 	r1 := &RuleGroupCopy{
-// 		Name: r.Name,
-// 		File: r.File,
-// 		Rules: r.Rules,
-// 		Interval: r.Interval,
-// 		EvaluationTime: r.EvaluationTime,
-// 		LastEvaluation: timestampToTime(r.LastEvaluation),
-// 		PartialResponseStrategy: r.PartialResponseStrategy,
-// 	}
- 	type plain RuleGroup
- 	return json.Marshal((*plain)(r))
- }
+	// 	r1 := &RuleGroupCopy{
+	// 		Name: r.Name,
+	// 		File: r.File,
+	// 		Rules: r.Rules,
+	// 		Interval: r.Interval,
+	// 		EvaluationTime: r.EvaluationTime,
+	// 		LastEvaluation: timestampToTime(r.LastEvaluation),
+	// 		PartialResponseStrategy: r.PartialResponseStrategy,
+	// 	}
+	type plain RuleGroup
+	return json.Marshal((*plain)(r))
+}
 
 type Rule interface{}
 
@@ -61,9 +59,9 @@ type AlertAPI struct {
 type Alert struct {
 	Labels      *labels.Labels `json:"labels"`
 	Annotations *labels.Labels `json:"annotations"`
-	State       string        `json:"state"`
-	ActiveAt    *time.Time    `json:"activeAt,omitempty"`
-	Value       string        `json:"value"`
+	State       string         `json:"state"`
+	ActiveAt    time.Time      `json:"activeAt,omitempty"`
+	Value       string         `json:"value"`
 
 	PartialResponseStrategy string `json:"partialResponseStrategy"`
 }
@@ -92,7 +90,7 @@ type RecordingRule struct {
 	Health         rules.RuleHealth `json:"health"`
 	LastError      string           `json:"lastError,omitempty"`
 	EvaluationTime float64          `json:"evaluationTime"`
-	LastEvaluation time.Time       `json:"lastEvaluation"`
+	LastEvaluation time.Time        `json:"lastEvaluation"`
 	// Type of a prometheusRecordingRule is always "recording".
 	Type string `json:"type"`
 }

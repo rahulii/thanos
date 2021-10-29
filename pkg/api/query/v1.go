@@ -72,12 +72,13 @@ const (
 	Step                     = "step"
 	Stats                    = "stats"
 )
-func timeToProtoTimestamp(t time.Time) *types.Timestamp{
-	timestamp,_ := types.TimestampProto(t)
+
+func timeToProtoTimestamp(t time.Time) *types.Timestamp {
+	timestamp, _ := types.TimestampProto(t)
 	return timestamp
 }
 
-func defaultTimeToTimestamp(t time.Time) *rulespb.Timestamp{
+func defaultTimeToTimestamp(t time.Time) *rulespb.Timestamp {
 	t1 := &rulespb.Timestamp{}
 	protoTime := timeToProtoTimestamp(t)
 
@@ -85,15 +86,15 @@ func defaultTimeToTimestamp(t time.Time) *rulespb.Timestamp{
 	t1.Nanos = protoTime.Nanos
 	return t1
 }
-func protoTimestampToTime(t *types.Timestamp) time.Time{
-	time,_ := types.TimestampFromProto(t)
+func protoTimestampToTime(t *types.Timestamp) time.Time {
+	time, _ := types.TimestampFromProto(t)
 	return time
 }
-func timestampToTime(t *rulespb.Timestamp) time.Time{
+func timestampToTime(t *rulespb.Timestamp) time.Time {
 	//convert custom Timestamp to protoTimestamp
-	
+
 	t1 := types.Timestamp{}
-	if t == nil{
+	if t == nil {
 		return time.Time{}
 	}
 	t1.Seconds = t.Seconds
@@ -102,9 +103,8 @@ func timestampToTime(t *rulespb.Timestamp) time.Time{
 	x := protoTimestampToTime(&t1)
 	return x
 
-	
-
 }
+
 // QueryAPI is an API used by Thanos Querier.
 type QueryAPI struct {
 	baseAPI         *api.BaseAPI
