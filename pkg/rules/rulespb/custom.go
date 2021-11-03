@@ -148,11 +148,11 @@ func NewRecordingRule(r *RecordingRule) *Rule {
 //
 // Note: This method assumes r1 and r2 are logically equal as per Rule#Compare.
 func (r1 *RecordingRule) Compare(r2 *RecordingRule) int {
-	if r1.LastEvaluation.Seconds < r2.LastEvaluation.Seconds {
+	if TimestampToTime(r1.LastEvaluation).Before(TimestampToTime(r2.LastEvaluation)){
 		return 1
 	}
 
-	if r1.LastEvaluation.Seconds > r2.LastEvaluation.Seconds {
+	if TimestampToTime(r1.LastEvaluation).After(TimestampToTime(r2.LastEvaluation)) {
 		return -1
 	}
 
@@ -429,11 +429,11 @@ func (a1 *Alert) Compare(a2 *Alert) int {
 		return d
 	}
 
-	if a1.LastEvaluation.Seconds < a2.LastEvaluation.Seconds {
+	if TimestampToTime(a1.LastEvaluation).Before(TimestampToTime(a2.LastEvaluation)) {
 		return 1
 	}
 
-	if a1.LastEvaluation.Seconds > a2.LastEvaluation.Seconds {
+	if TimestampToTime(a1.LastEvaluation).After(TimestampToTime(a2.LastEvaluation)) {
 		return -1
 	}
 

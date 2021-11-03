@@ -595,8 +595,8 @@ func TestBucketStore_Info(t *testing.T) {
 	testutil.Equals(t, storepb.StoreType_STORE, resp.StoreType)
 	testutil.Equals(t, int64(math.MaxInt64), resp.MinTime)
 	testutil.Equals(t, int64(math.MinInt64), resp.MaxTime)
-	testutil.Equals(t, []labelpb.ZLabelSet(nil), resp.LabelSets)
-	testutil.Equals(t, []labelpb.ZLabel(nil), resp.Labels)
+	testutil.Equals(t, []*labelpb.ZLabelSet(nil), resp.LabelSets)
+	testutil.Equals(t, []*labelpb.Label(nil), resp.Labels)
 }
 
 type recorder struct {
@@ -673,12 +673,12 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
 		name              string
 		relabel           string
 		expectedIDs       []ulid.ULID
-		expectedAdvLabels []labelpb.ZLabelSet
+		expectedAdvLabels []*labelpb.ZLabelSet
 	}{
 		{
 			name:        "no sharding",
 			expectedIDs: all,
-			expectedAdvLabels: []labelpb.ZLabelSet{
+			expectedAdvLabels: []*labelpb.ZLabelSet{
 				{
 					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
@@ -713,7 +713,7 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
               - cluster
             `,
 			expectedIDs: []ulid.ULID{all[2]},
-			expectedAdvLabels: []labelpb.ZLabelSet{
+			expectedAdvLabels: []*labelpb.ZLabelSet{
 				{
 					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "b"},
@@ -736,7 +736,7 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
               - cluster
             `,
 			expectedIDs: []ulid.ULID{all[0], all[1], all[3]},
-			expectedAdvLabels: []labelpb.ZLabelSet{
+			expectedAdvLabels: []*labelpb.ZLabelSet{
 				{
 					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
@@ -769,7 +769,7 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
               - region
             `,
 			expectedIDs: []ulid.ULID{all[0], all[1]},
-			expectedAdvLabels: []labelpb.ZLabelSet{
+			expectedAdvLabels: []*labelpb.ZLabelSet{
 				{
 					Labels: []*labelpb.Label{
 						{Name: "cluster", Value: "a"},
@@ -796,7 +796,7 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
               - region
             `,
 			expectedIDs:       []ulid.ULID{},
-			expectedAdvLabels: []labelpb.ZLabelSet{},
+			expectedAdvLabels: []*labelpb.ZLabelSet{},
 		},
 	} {
 		t.Run(sc.name, func(t *testing.T) {
@@ -854,7 +854,7 @@ func testSharding(t *testing.T, reuseDisk string, bkt objstore.Bucket, all ...ul
 			testutil.Ok(t, err)
 
 			testutil.Equals(t, storepb.StoreType_STORE, resp.StoreType)
-			testutil.Equals(t, []labelpb.ZLabel(nil), resp.Labels)
+			testutil.Equals(t, []*labelpb.Label(nil), resp.Labels)
 			testutil.Equals(t, sc.expectedAdvLabels, resp.LabelSets)
 
 			// Make sure we don't download files we did not expect to.

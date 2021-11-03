@@ -201,7 +201,7 @@ func testRulesAgainstExamples(t *testing.T, dir string, server rulespb.RulesServ
 				}
 				// Mask nondeterministic fields.
 				got[i].EvaluationDurationSeconds = 0
-				got[i].LastEvaluation= defaultTimeToTimestamp(time.Time{})
+				got[i].LastEvaluation = nil
 
 				t.Run(got[i].Name+" "+path.Base(got[i].File), func(t *testing.T) {
 					testutil.Equals(t, expectedForType[i], got[i])

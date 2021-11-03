@@ -81,7 +81,7 @@ func testPrometheusStoreSeriesE2e(t *testing.T, prefix string) {
 
 		testutil.Equals(t, 1, len(srv.SeriesSet))
 
-		testutil.Equals(t, []labelpb.ZLabel{
+		testutil.Equals(t, []*labelpb.Label{
 			{Name: "a", Value: "b"},
 			{Name: "region", Value: "eu-west"},
 		}, srv.SeriesSet[0].Labels)
@@ -114,7 +114,7 @@ func testPrometheusStoreSeriesE2e(t *testing.T, prefix string) {
 
 		testutil.Equals(t, 1, len(srv.SeriesSet))
 
-		testutil.Equals(t, []labelpb.ZLabel{
+		testutil.Equals(t, []*labelpb.Label{
 			{Name: "a", Value: "b"},
 			{Name: "region", Value: "eu-west"},
 		}, srv.SeriesSet[0].Labels)
@@ -589,7 +589,7 @@ func TestPrometheusStore_Series_MatchExternalLabel_e2e(t *testing.T) {
 
 	testutil.Equals(t, 1, len(srv.SeriesSet))
 
-	testutil.Equals(t, []labelpb.ZLabel{
+	testutil.Equals(t, []*labelpb.Label{
 		{Name: "a", Value: "b"},
 		{Name: "region", Value: "eu-west"},
 	}, srv.SeriesSet[0].Labels)
@@ -624,7 +624,7 @@ func TestPrometheusStore_Info(t *testing.T) {
 	resp, err := proxy.Info(ctx, &storepb.InfoRequest{})
 	testutil.Ok(t, err)
 
-	testutil.Equals(t, []labelpb.ZLabel{{Name: "region", Value: "eu-west"}}, resp.Labels)
+	testutil.Equals(t, []*labelpb.Label{{Name: "region", Value: "eu-west"}}, resp.Labels)
 	testutil.Equals(t, storepb.StoreType_SIDECAR, resp.StoreType)
 	testutil.Equals(t, int64(123), resp.MinTime)
 	testutil.Equals(t, int64(456), resp.MaxTime)
@@ -660,7 +660,7 @@ func testSeries_SplitSamplesIntoChunksWithMaxSizeOf120(t *testing.T, appender st
 
 	firstSeries := srv.SeriesSet[0]
 
-	testutil.Equals(t, []labelpb.ZLabel{
+	testutil.Equals(t, []*labelpb.Label{
 		{Name: "a", Value: "b"},
 		{Name: "region", Value: "eu-west"},
 	}, firstSeries.Labels)
