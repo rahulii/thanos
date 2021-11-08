@@ -17,6 +17,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/thanos-io/thanos/pkg/promclient"
+	"github.com/thanos-io/thanos/pkg/rules/rulespb"
 	"github.com/thanos-io/thanos/pkg/runutil"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/targets/targetspb"
@@ -121,7 +122,7 @@ func targetAndAssert(t *testing.T, ctx context.Context, addr, state string, want
 		}
 
 		for it := range res.ActiveTargets {
-			res.ActiveTargets[it].LastScrape = timeToProtoTimestamp(time.Time{})
+			res.ActiveTargets[it].LastScrape = rulespb.TimeToTimestamp(time.Time{})
 			res.ActiveTargets[it].LastScrapeDuration = 0
 			res.ActiveTargets[it].GlobalUrl = ""
 		}

@@ -7,8 +7,7 @@ package thanos;
 import "store/storepb/types.proto";
 //import "gogoproto/gogo.proto";
 import "store/labelpb/types.proto";
-import "google/protobuf/timestamp.proto";
-
+import "rules/rulespb/rpc.proto";
 option go_package = "targetspb";
 
 // option (gogoproto.sizer_all) = true;
@@ -78,7 +77,7 @@ message ActiveTarget {
     // @gotags: json:"lastError"
     string lastError = 6;
     // @gotags: json:"lastScrape"
-    google.protobuf.Timestamp lastScrape = 7;
+    Timestamp lastScrape = 7;
     // @gotags: json:"lastScrapeDuration"
     double lastScrapeDuration = 8;
     // @gotags: json:"health"

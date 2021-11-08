@@ -7,10 +7,18 @@ import (
 	"strconv"
 	"strings"
 
+	"time"
+
+	"github.com/gogo/protobuf/types"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
+	"github.com/thanos-io/thanos/pkg/rules/rulespb"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 )
+func timeToProtoTimestamp(t time.Time) *types.Timestamp{
+	timestamp,_ := types.TimestampProto(t)
+	return timestamp
+}
 
 func NewTargetsResponse(targets *TargetDiscovery) *TargetsResponse {
 	return &TargetsResponse{
@@ -79,16 +87,27 @@ func (t1 *ActiveTarget) CompareState(t2 *ActiveTarget) int {
 		return d
 	}
 
-	if t1.LastScrape.Compare(t2.LastScrape) < 0 {
+	if rulespb.TimestampToTime(t1.LastScrape).Before(rulespb.TimestampToTime(t2.LastScrape)){
 		return 1
 	}
 
-	if t1.LastScrape.Compare(t2.LastScrape) > 0 {
+	if rulespb.TimestampToTime(t1.LastScrape).After(rulespb.TimestampToTime(t2.LastScrape)) {
 		return -1
 	}
 
 	return 0
 }
+
+// func (t1 *ActiveTarget) UnmarshalJSON(data []byte) error {
+// 	t := ActiveTarget{}
+// 	if err:= json.Unmarshal(data,&t);err!=nil{
+// 		return err
+// 	}
+
+// 	t1 = &t
+
+// 	return nil
+// }
 
 func (t1 *DroppedTarget) Compare(t2 *DroppedTarget) int {
 	if d := labels.Compare(t1.DiscoveredLabels.PromLabels(), t2.DiscoveredLabels.PromLabels()); d != 0 {

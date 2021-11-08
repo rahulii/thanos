@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/thanos-io/thanos/pkg/rules/rulespb"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/targets/targetspb"
 	"github.com/thanos-io/thanos/pkg/testutil"
-	
 )
 
 
@@ -224,7 +224,7 @@ func TestDedupTargets(t *testing.T) {
 						ScrapePool: "myself",
 						ScrapeUrl:  "http://localhost:9090/metrics",
 						Health:     targetspb.TargetHealth_UP,
-						LastScrape: timeToProtoTimestamp(time.Unix(1, 0)),
+						LastScrape: rulespb.TimeToTimestamp(time.Unix(1, 0)),
 					},
 					{
 						DiscoveredLabels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
@@ -244,7 +244,7 @@ func TestDedupTargets(t *testing.T) {
 						ScrapePool: "myself",
 						ScrapeUrl:  "http://localhost:9090/metrics",
 						Health:     targetspb.TargetHealth_UP,
-						LastScrape: timeToProtoTimestamp(time.Unix(2, 0)),
+						LastScrape: rulespb.TimeToTimestamp(time.Unix(2, 0)),
 					},
 				},
 			},
@@ -266,7 +266,7 @@ func TestDedupTargets(t *testing.T) {
 						ScrapePool: "myself",
 						ScrapeUrl:  "http://localhost:9090/metrics",
 						Health:     targetspb.TargetHealth_UP,
-						LastScrape: timeToProtoTimestamp(time.Unix(2, 0)),
+						LastScrape: rulespb.TimeToTimestamp(time.Unix(2, 0)),
 					},
 				},
 			},

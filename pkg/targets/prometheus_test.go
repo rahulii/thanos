@@ -23,6 +23,7 @@ import (
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/pkg/testutil/e2eutil"
 	protobuf "github.com/gogo/protobuf/types"
+	"github.com/thanos-io/thanos/pkg/rules/rulespb"
 
 )
 
@@ -103,7 +104,7 @@ scrape_configs:
 				ScrapeUrl:          fmt.Sprintf("http://%s/metrics", p.Addr()),
 				GlobalUrl:          "",
 				Health:             targetspb.TargetHealth_UP,
-				LastScrape:         timeToProtoTimestamp(time.Time{}),
+				LastScrape:         rulespb.TimeToTimestamp(time.Time{}),
 				LastScrapeDuration: 0,
 			},
 		},
@@ -158,7 +159,7 @@ scrape_configs:
 
 			for i := range targets.ActiveTargets {
 				targets.ActiveTargets[i].LastScrapeDuration = 0
-				targets.ActiveTargets[i].LastScrape = timeToProtoTimestamp(time.Time{})
+				targets.ActiveTargets[i].LastScrape = rulespb.TimeToTimestamp(time.Time{})
 				targets.ActiveTargets[i].LastError = ""
 				targets.ActiveTargets[i].GlobalUrl = ""
 			}

@@ -99,9 +99,9 @@ func (e1 *Exemplar) Compare(e2 *Exemplar) int {
 
 func ExemplarsFromPromExemplars(exemplars []exemplar.Exemplar) []*Exemplar {
 	ex := make([]*Exemplar, 0, len(exemplars))
-	for _, e := range exemplars {
+	for _, e := range exemplars { 
 		ex = append(ex, &Exemplar{
-			Labels: &labelpb.ZLabelSet{Labels: labelpb.ProtobufLabelsFromPromLabels(e.Labels)},
+			Labels: labelpb.ZLabelSetFromProtobufLabels(labelpb.ProtobufLabelsFromPromLabels(e.Labels)),
 			Value:  e.Value,
 			Ts:     e.Ts,
 		})

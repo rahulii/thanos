@@ -39,6 +39,14 @@ func ProtobufLabelsFromPromLabels(lset labels.Labels) []*Label {
 	return labels
 }
 
+// ZLabelSetFromProtobufLabels converts a slice of pointers to labelpb.Label to a pointer to a ZLabelSet.
+func ZLabelSetFromProtobufLabels(lset []*Label) *ZLabelSet {
+	if len(lset) == 0 {
+		return nil
+	}
+	return &ZLabelSet{Labels: lset}
+}
+
 // ProtobufLabelsToPromLabels converts a slice of pointers labelpb.Label to Prometheus labels.
 func ProtobufLabelsToPromLabels(lset []*Label) labels.Labels {
 	promLabels := make([]labels.Label, 0, len(lset))
@@ -319,6 +327,9 @@ func (m *ZLabelSet) MarshalJSON() ([]byte, error) {
 
 // PromLabels return Prometheus labels.Labels without extra allocation.
 func (m *ZLabelSet) PromLabels() labels.Labels {
+	if len(m.Labels) == 0{
+		fmt.Println("nil")
+	} 
 	return ProtobufLabelsToPromLabels(m.Labels)
 }
 
