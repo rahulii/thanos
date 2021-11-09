@@ -467,6 +467,7 @@ config:
 				targetAndAssert(t, ctx, q.HTTPEndpoint(), "", &targetspb.TargetDiscovery{
 					ActiveTargets: []*targetspb.ActiveTarget{
 						{
+							LastScrape: rulespb.TimeToTimestamp(time.Time{}),
 							DiscoveredLabels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 								{Name: "__address__", Value: fmt.Sprintf("e2e_test_query_comp_query_%d-querier-1:8080", i)},
 								{Name: "__metrics_path__", Value: "/metrics"},
@@ -484,6 +485,7 @@ config:
 							Health:     targetspb.TargetHealth_UP,
 						},
 						{
+							LastScrape: rulespb.TimeToTimestamp(time.Time{}),
 							DiscoveredLabels: &labelpb.ZLabelSet{Labels: []*labelpb.Label{
 								{Name: "__address__", Value: "localhost:9090"},
 								{Name: "__metrics_path__", Value: "/metrics"},
@@ -509,8 +511,9 @@ config:
 			{
 				ruleAndAssert(t, ctx, q.HTTPEndpoint(), "", []*rulespb.RuleGroup{
 					{
-						Name: "example_abort",
-						File: "/shared/rules/rules.yaml",
+						Name:           "example_abort",
+						File:           "/shared/rules/rules.yaml",
+						LastEvaluation: rulespb.TimeToTimestamp(time.Time{}),
 						Rules: []*rulespb.Rule{
 							rulespb.NewAlertingRule(&rulespb.Alert{
 								Name:  "TestAlert_AbortOnPartialResponse",

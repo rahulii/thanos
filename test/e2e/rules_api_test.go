@@ -17,6 +17,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/pkg/errors"
 
+	protobuf "github.com/gogo/protobuf/types"
 	http_util "github.com/thanos-io/thanos/pkg/http"
 	"github.com/thanos-io/thanos/pkg/promclient"
 	"github.com/thanos-io/thanos/pkg/query"
@@ -25,12 +26,10 @@ import (
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 	"github.com/thanos-io/thanos/pkg/testutil"
 	"github.com/thanos-io/thanos/test/e2e/e2ethanos"
-	protobuf "github.com/gogo/protobuf/types"
 )
 
-
-func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp{
-	timestamp,_ := protobuf.TimestampProto(t)
+func timeToProtoTimestamp(t time.Time) *protobuf.Timestamp {
+	timestamp, _ := protobuf.TimestampProto(t)
 	return timestamp
 }
 
@@ -108,8 +107,9 @@ func TestRulesAPI_Fanout(t *testing.T) {
 
 	ruleAndAssert(t, ctx, q.HTTPEndpoint(), "", []*rulespb.RuleGroup{
 		{
-			Name: "example_abort",
-			File: "/shared/rules/rules.yaml",
+			Name:           "example_abort",
+			File:           "/shared/rules/rules.yaml",
+			LastEvaluation: (*rulespb.Timestamp)(timeToProtoTimestamp(time.Time{})),
 			Rules: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:  "TestAlert_AbortOnPartialResponse",
@@ -123,8 +123,9 @@ func TestRulesAPI_Fanout(t *testing.T) {
 			},
 		},
 		{
-			Name: "example_abort",
-			File: "/shared/thanos-rules/rules-0.yaml",
+			Name:           "example_abort",
+			File:           "/shared/thanos-rules/rules-0.yaml",
+			LastEvaluation: (*rulespb.Timestamp)(timeToProtoTimestamp(time.Time{})),
 			Rules: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:  "TestAlert_AbortOnPartialResponse",
@@ -137,8 +138,9 @@ func TestRulesAPI_Fanout(t *testing.T) {
 			},
 		},
 		{
-			Name: "example_warn",
-			File: "/shared/thanos-rules/rules-1.yaml",
+			Name:           "example_warn",
+			File:           "/shared/thanos-rules/rules-1.yaml",
+			LastEvaluation: (*rulespb.Timestamp)(timeToProtoTimestamp(time.Time{})),
 			Rules: []*rulespb.Rule{
 				rulespb.NewAlertingRule(&rulespb.Alert{
 					Name:  "TestAlert_WarnOnPartialResponse",
