@@ -7,18 +7,11 @@ import (
 	"strconv"
 	"strings"
 
-	"time"
-
-	"github.com/gogo/protobuf/types"
 	"github.com/pkg/errors"
 	"github.com/prometheus/prometheus/pkg/labels"
 	"github.com/thanos-io/thanos/pkg/rules/rulespb"
 	"github.com/thanos-io/thanos/pkg/store/labelpb"
 )
-func timeToProtoTimestamp(t time.Time) *types.Timestamp{
-	timestamp,_ := types.TimestampProto(t)
-	return timestamp
-}
 
 func NewTargetsResponse(targets *TargetDiscovery) *TargetsResponse {
 	return &TargetsResponse{
@@ -87,7 +80,7 @@ func (t1 *ActiveTarget) CompareState(t2 *ActiveTarget) int {
 		return d
 	}
 
-	if rulespb.TimestampToTime(t1.LastScrape).Before(rulespb.TimestampToTime(t2.LastScrape)){
+	if rulespb.TimestampToTime(t1.LastScrape).Before(rulespb.TimestampToTime(t2.LastScrape)) {
 		return 1
 	}
 
