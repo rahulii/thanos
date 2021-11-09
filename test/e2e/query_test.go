@@ -423,7 +423,7 @@ config:
 
 			// Metadata.
 			{
-				var promMeta map[string][]metadatapb.Meta
+				var promMeta map[string][]*metadatapb.Meta
 				// Wait metadata response to be ready as Prometheus gets metadata after scrape.
 				testutil.Ok(t, runutil.Retry(3*time.Second, ctx.Done(), func() error {
 					promMeta, err = promclient.NewDefaultClient().MetricMetadataInGRPC(ctx, mustURLParse(t, "http://"+p1.HTTPEndpoint()), "", -1)
