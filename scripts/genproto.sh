@@ -8,7 +8,7 @@ set -u
 PROTOC_BIN=${PROTOC_BIN:-protoc}
 GOIMPORTS_BIN=${GOIMPORTS_BIN:-goimports}
 PROTOC_GEN_GOGOFAST_BIN=${PROTOC_GEN_GOGOFAST_BIN:-protoc-gen-gogofast}
-
+INCLUDE_PATH=${INCLUDE_PATH:-/tmp/proto/include}
 if ! [[ "scripts/genproto.sh" =~ $0 ]]; then
   echo "must be run from repository root"
   exit 255
@@ -21,20 +21,19 @@ fi
 
 mkdir -p /tmp/protobin/
 cp ${PROTOC_GEN_GOGOFAST_BIN} /tmp/protobin/protoc-gen-gogofast
+cp ${PROTOC_GEN_GO_BIN} /tmp/protobin/protoc-gen-go
 PATH=${PATH}:/tmp/protobin
-GOGOPROTO_ROOT="$(GO111MODULE=on go list -modfile=.bingo/protoc-gen-gogofast.mod -f '{{ .Dir }}' -m github.com/gogo/protobuf)"
-GOGOPROTO_PATH="${GOGOPROTO_ROOT}:${GOGOPROTO_ROOT}/protobuf"
 
-DIRS="store/storepb/ store/storepb/prompb/ store/labelpb rules/rulespb targets/targetspb store/hintspb queryfrontend metadata/metadatapb exemplars/exemplarspb info/infopb"
+DIRS="store/storepb store/storepb/prompb/ store/labelpb rules/rulespb targets/targetspb store/hintspb queryfrontend metadata/metadatapb exemplars/exemplarspb info/infopb"
 echo "generating code"
 pushd "pkg"
 for dir in ${DIRS}; do
-  ${PROTOC_BIN} --gogofast_out=Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types,plugins=grpc:. \
-    -I=. \
-    -I="${GOGOPROTO_PATH}" \
-    ${dir}/*.proto
+  ${PROTOC_BIN} --go_out=. \
+  -I=. \
+  -I=${INCLUDE_PATH} \
+  ${dir}/*.proto
   protoc-go-inject-tag -input=${dir}/*pb.go
-  
+
 
   pushd ${dir}
   sed -i.bak -E 's/import _ \"gogoproto\"//g' *.pb.go
